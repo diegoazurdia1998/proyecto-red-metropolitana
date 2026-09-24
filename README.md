@@ -7,6 +7,27 @@ Pipeline de ingeniería de datos para la unificación, control de calidad, histo
 El proyecto implementa una **Arquitectura Medallion** (Bronze, Staging, Silver y Gold) orquestada con **Prefect**, transformaciones SQL declarativas con **dbt Core**, almacenamiento relacional en **PostgreSQL**, ingesta desacoplada vía **Apache Kafka** y un Data Lake columnar particionado en formato **Parquet**.
 
   
+## Estructura de Entregables (`results/`)
+
+Todos los artefactos generados siguen el estándar de nomenclatura `[fase]_[subfase]_[contenido].extension`:
+
+  
+
+| **Archivo**                                 | **Formato** | **Contenido**                                                          |
+| ------------------------------------------- | ----------- | ---------------------------------------------------------------------- |
+| `fase1_1.1_ingesta_batch_cdc_conteos_*.csv` | CSV         | Registro de filas procesadas por archivo fuente hacia Bronze.          |
+| `fase1_1.1_ingesta_batch_cdc_resumen_*.md`  | Markdown    | Bitácora técnica y justificación de arquitectura de Data Lake.         |
+| `fase1_1.1_ingesta_streaming_conteos_*.csv` | CSV         | Conteos por tópico de streaming consumidos hacia Bronze.               |
+| `fase1_1.2_padron_vigente_transmetro_*.csv` | CSV         | Padrón procesado con balance final de altas y bajas por CDC.           |
+| `fase1_1.2_catalogos_usuarios_*.csv`        | CSV         | Extracción de llaves únicas por operador para catálogos mínimos.       |
+| `fase1_1.2_resumen_cdc_conteos_*.md`        | Markdown    | Resumen documental del balance CDC y usuarios únicos intermodales.     |
+| `fase1_1.3_metricas_cuarentena_*.csv`       | CSV         | Distribución de registros rechazados por fuente y regla de validación. |
+| `fase1_1.3_reporte_calidad_cuarentena_*.md` | Markdown    | Reporte formal de auditoría y supuestos de identidad de usuario.       |
+| `fase1_1.5_conteos_corridas_*.csv`          | CSV         | Matriz de auditoría comparativa de conteos (Corrida 1 vs. Corrida 2).  |
+| `fase1_1.5_evidencia_idempotencia_*.md`     | Markdown    | Certificación técnica del principio de idempotencia del pipeline.      |
+| `fase1_1.5_log_ejecucion_*.log`             | Log         | Salida completa de terminal y eventos de Prefect durante la ejecución. |
+
+
 
 ## 1. Arquitectura del Flujo de Datos
 
@@ -59,7 +80,7 @@ El proyecto implementa una **Arquitectura Medallion** (Bronze, Staging, Silver y
 ### Clonar el repositorio y preparar el entorno virtual
 
 ```
-git clone <URL_DEL_REPOSITORIO>
+git clone https://github.com/diegoazurdia1998/proyecto-red-metropolitana
 cd proyecto-red-metropolitana
 
 # Crear y activar entorno virtual en Windows PowerShell
@@ -110,27 +131,6 @@ Para generar:
 ```
 python .\scripts\orchestration\test_idempotencia.py 
 ```
-
-
-## 5. Estructura de Entregables (`results/`)
-
-Todos los artefactos generados siguen el estándar de nomenclatura `[fase]_[subfase]_[contenido].extension`:
-
-  
-
-| **Archivo**                                 | **Formato** | **Contenido**                                                          |
-| ------------------------------------------- | ----------- | ---------------------------------------------------------------------- |
-| `fase1_1.1_ingesta_batch_cdc_conteos_*.csv` | CSV         | Registro de filas procesadas por archivo fuente hacia Bronze.          |
-| `fase1_1.1_ingesta_batch_cdc_resumen_*.md`  | Markdown    | Bitácora técnica y justificación de arquitectura de Data Lake.         |
-| `fase1_1.1_ingesta_streaming_conteos_*.csv` | CSV         | Conteos por tópico de streaming consumidos hacia Bronze.               |
-| `fase1_1.2_padron_vigente_transmetro_*.csv` | CSV         | Padrón procesado con balance final de altas y bajas por CDC.           |
-| `fase1_1.2_catalogos_usuarios_*.csv`        | CSV         | Extracción de llaves únicas por operador para catálogos mínimos.       |
-| `fase1_1.2_resumen_cdc_conteos_*.md`        | Markdown    | Resumen documental del balance CDC y usuarios únicos intermodales.     |
-| `fase1_1.3_metricas_cuarentena_*.csv`       | CSV         | Distribución de registros rechazados por fuente y regla de validación. |
-| `fase1_1.3_reporte_calidad_cuarentena_*.md` | Markdown    | Reporte formal de auditoría y supuestos de identidad de usuario.       |
-| `fase1_1.5_conteos_corridas_*.csv`          | CSV         | Matriz de auditoría comparativa de conteos (Corrida 1 vs. Corrida 2).  |
-| `fase1_1.5_evidencia_idempotencia_*.md`     | Markdown    | Certificación técnica del principio de idempotencia del pipeline.      |
-| `fase1_1.5_log_ejecucion_*.log`             | Log         | Salida completa de terminal y eventos de Prefect durante la ejecución. |
 
 ## 6. Verificación de la Base de Datos
 
