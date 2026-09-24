@@ -1,0 +1,6 @@
+fuente,regla_violada,registros_rechazados
+Aerometro,DUPLICADO_TORNIQUETE,13
+MetroRiel,VIAJE_SIN_SALIDA,3589
+Transmetro,DUPLICADO_TORNIQUETE,1116
+Transurbano,FECHA_FUTURA,817
+Transurbano,DUPLICADO_TORNIQUETE,3

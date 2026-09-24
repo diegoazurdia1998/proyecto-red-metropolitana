@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: staging
+    schema: staging
+    tables:
+      - name: padron_transmetro_actual
+      - name: transmetro_validaciones
+      - name: transurbano_transacciones
+      - name: metroriel_viajes
+      - name: aerometro_boardings
+      - name: catalogo_minimo_transurbano
+      - name: catalogo_minimo_metroriel
+      - name: catalogo_minimo_aerometro
