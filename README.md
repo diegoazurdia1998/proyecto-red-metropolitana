@@ -59,7 +59,7 @@ El proyecto implementa una **Arquitectura Medallion** (Bronze, Staging, Silver y
 ### Clonar el repositorio y preparar el entorno virtual
 
 ```
-git clone <URL_DEL_REPOSITORIO>
+git clone [<URL_DEL_REPOSITORIO>](https://github.com/diegoazurdia1998/proyecto-red-metropolitana)
 cd proyecto-red-metropolitana
 
 # Crear y activar entorno virtual en Windows PowerShell
