@@ -25,8 +25,6 @@ Todos los artefactos generados siguen el estándar de nomenclatura `[fase]_[subf
 | `fase1_1.3_reporte_calidad_cuarentena_*.md` | Markdown    | Reporte formal de auditoría y supuestos de identidad de usuario.       |
 | `fase1_1.5_conteos_corridas_*.csv`          | CSV         | Matriz de auditoría comparativa de conteos (Corrida 1 vs. Corrida 2).  |
 | `fase1_1.5_evidencia_idempotencia_*.md`     | Markdown    | Certificación técnica del principio de idempotencia del pipeline.      |
-| `fase1_1.5_log_ejecucion_*.log`             | Log         | Salida completa de terminal y eventos de Prefect durante la ejecución. |
-
 
 
 ## 1. Arquitectura del Flujo de Datos
