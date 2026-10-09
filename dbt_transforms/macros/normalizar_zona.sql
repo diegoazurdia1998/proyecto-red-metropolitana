@@ -10,7 +10,9 @@
         WHEN UPPER(TRIM({{ campo_zona }})) IN ('Z10', 'ZONA 10', 'ZONE 10') THEN 'Zona 10'
         WHEN UPPER(TRIM({{ campo_zona }})) IN ('Z11', 'ZONA 11', 'ZONE 11') THEN 'Zona 11'
         WHEN UPPER(TRIM({{ campo_zona }})) IN ('Z12', 'ZONA 12', 'ZONE 12') THEN 'Zona 12'
+        WHEN UPPER(TRIM({{ campo_zona }})) IN ('Z13', 'ZONA 13', 'ZONE 13') THEN 'Zona 13'
         WHEN UPPER(TRIM({{ campo_zona }})) IN ('Z17', 'ZONA 17', 'ZONE 17') THEN 'Zona 17'
+        WHEN UPPER(TRIM({{ campo_zona }})) IN ('Z18', 'ZONA 18', 'ZONE 18') THEN 'Zona 18'
         ELSE INITCAP(TRIM({{ campo_zona }}))
     END
 {% endmacro %}

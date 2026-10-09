@@ -1,13 +1,17 @@
 {{ config(materialized='table') }}
 
 WITH todas_las_estaciones AS (
-    SELECT codigo_estacion, nombre_estacion, sistema_modo, zona_normalizada FROM {{ ref('stg_estaciones_transmetro') }}
+    SELECT codigo_estacion, nombre_estacion, 'Transmetro' AS sistema_modo, zona_normalizada 
+    FROM {{ ref('stg_estaciones_transmetro') }}
     UNION ALL
-    SELECT codigo_estacion, nombre_estacion, sistema_modo, zona_normalizada FROM {{ ref('stg_estaciones_aerometro') }}
+    SELECT codigo_estacion, nombre_estacion, 'Aerometro' AS sistema_modo, zona_normalizada 
+    FROM {{ ref('stg_estaciones_aerometro') }}
     UNION ALL
-    SELECT codigo_estacion, nombre_estacion, sistema_modo, zona_normalizada FROM {{ ref('stg_estaciones_metroriel') }}
+    SELECT codigo_estacion, nombre_estacion, 'MetroRiel' AS sistema_modo, zona_normalizada 
+    FROM {{ ref('stg_estaciones_metroriel') }}
     UNION ALL
-    SELECT codigo_estacion, nombre_estacion, sistema_modo, zona_normalizada FROM {{ ref('stg_paradas_transurbano') }}
+    SELECT codigo_estacion, nombre_estacion, 'Transurbano' AS sistema_modo, zona_normalizada 
+    FROM {{ ref('stg_paradas_transurbano') }}
 )
 
 SELECT

@@ -1,10 +1,10 @@
 {{ config(materialized='view') }}
 
 SELECT
-    TRIM(estacion_id)::varchar AS codigo_estacion,
-    TRIM(nombre)::varchar AS nombre_estacion,
-    'Transmetro' AS sistema_modo,
-    {{ normalizar_zona('zona') }} AS zona_normalizada,
-    TRIM(linea)::varchar AS linea_ruta
-FROM {{ ref('tm_estaciones') }}
-WHERE estacion_id IS NOT NULL
+    TRIM(cod_parada)::varchar AS codigo_estacion,
+    TRIM(descripcion)::varchar AS nombre_estacion,
+    'Transurbano' AS sistema_modo,
+    {{ normalizar_zona('sector') }} AS zona_normalizada,
+    TRIM(ruta)::varchar AS linea_ruta
+FROM {{ ref('tu_paradas') }}
+WHERE cod_parada IS NOT NULL

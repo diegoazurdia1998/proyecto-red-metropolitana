@@ -1,6 +1,6 @@
 # Reporte de Calidad de Datos y Cuarentena (Subfase 1.3)
 
-- **Total Registros en Cuarentena:** 5538
+- **Total Registros en Cuarentena:** 9724
 
 ## Distribución de Fallas por Fuente y Regla
 
@@ -9,7 +9,8 @@
 | Aerometro   | DUPLICADO_TORNIQUETE |                     13 |
 | MetroRiel   | VIAJE_SIN_SALIDA     |                   3589 |
 | Transmetro  | DUPLICADO_TORNIQUETE |                   1116 |
-| Transurbano | FECHA_FUTURA         |                    817 |
+| Transurbano | PARADA_NULA          |                   4189 |
+| Transurbano | FECHA_FUTURA         |                    814 |
 | Transurbano | DUPLICADO_TORNIQUETE |                      3 |
 
 ---
