@@ -9,7 +9,6 @@ El proyecto implementa una **Arquitectura Medallion** (Bronze, Staging, Silver y
 
 ## Estructura de Entregables (`results/`)
 
-<<<<<<< Updated upstream
 Todos los artefactos generados siguen el estándar de nomenclatura `[fase]_[subfase]_[contenido].extension`:
 
   
@@ -42,7 +41,6 @@ Todos los artefactos y reportes generados siguen el estándar de nomenclatura `[
 | `fase1_1.5_conteos_corridas_*.csv` | CSV | Matriz comparativa de auditoría (Corrida 1 vs. Corrida 2). |
 | `fase1_1.5_evidencia_idempotencia_*.md` | Markdown | Demostración técnica del principio de idempotencia del pipeline. |
 | `fase1_1.5_log_ejecucion_*.log` | Log | Registro detallado de terminal y eventos emitidos por Prefect. |
->>>>>>> Stashed changes
 
 ---
 
