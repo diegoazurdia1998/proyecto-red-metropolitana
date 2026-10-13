@@ -25,7 +25,8 @@ Todos los artefactos generados siguen el estándar de nomenclatura `[fase]_[subf
 | `fase1_1.3_reporte_calidad_cuarentena_*.md` | Markdown    | Reporte formal de auditoría y supuestos de identidad de usuario.       |
 | `fase1_1.5_conteos_corridas_*.csv`          | CSV         | Matriz de auditoría comparativa de conteos (Corrida 1 vs. Corrida 2).  |
 | `fase1_1.5_evidencia_idempotencia_*.md`     | Markdown    | Certificación técnica del principio de idempotencia del pipeline.      |
-=======
+
+---
 Todos los artefactos y reportes generados siguen el estándar de nomenclatura `[fase]_[subfase]_[contenido].extension`:
 
 | Archivo | Formato | Descripción |
