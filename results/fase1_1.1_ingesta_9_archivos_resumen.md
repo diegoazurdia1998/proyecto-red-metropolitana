@@ -1,0 +1,19 @@
+# Auditoría Consolidada de Ingesta a Capa Bronze (9 Fuentes)
+
+Validación integral de la totalidad de archivos de la red metropolitana frente al almacenamiento físico en Bronze (Parquet Snappy).
+
+| archivo_fuente                | via_ingesta       | filas_origen | filas_bronze | diferencia | estado |
+| :---------------------------- | :---------------- | -----------: | -----------: | ---------: | :----- |
+| tm_estaciones.csv             | Batch             |          104 |          104 |          0 | OK     |
+| tu_paradas.csv                | Batch             |          328 |          328 |          0 | OK     |
+| mr_estaciones.csv             | Batch             |           22 |           22 |          0 | OK     |
+| am_estaciones.csv             | Batch             |           14 |           14 |          0 | OK     |
+| transurbano_transacciones.csv | Batch             |       832791 |       832791 |          0 | OK     |
+| metroriel_viajes.jsonl        | Batch             |       299100 |       299100 |          0 | OK     |
+| cdc_padron_usuarios.csv       | CDC               |        31050 |        31050 |          0 | OK     |
+| transmetro_validaciones.csv   | Streaming (Kafka) |       363221 |       363221 |          0 | OK     |
+| aerometro_boardings.csv       | Streaming (Kafka) |       203554 |       203554 |          0 | OK     |
+
+- **Total Filas en Origen:** 1,730,184
+- **Total Filas en Bronze:** 1,730,184
+- **Balance General:** 100% Consistente e Idempotente

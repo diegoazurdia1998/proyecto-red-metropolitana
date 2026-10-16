@@ -15,7 +15,7 @@ KAFKA_CONF = {
 }
 
 
-def guardar_batch_bronze(records: list, dataset_name: str):
+def guardar_batch_bronze(records: list, dataset_name: str, batch_num: int = 0):
     if not records:
         return 0
 
@@ -24,7 +24,6 @@ def guardar_batch_bronze(records: list, dataset_name: str):
     df["ingestion_timestamp"] = ahora.isoformat()
     df["source_file"] = f"{dataset_name}.stream"
 
-    # Detección explícita de columna temporal para partición física YYYY/MM/DD
     if "timestamp_utc" in df.columns:
         col_fecha = "timestamp_utc"
     else:
@@ -43,7 +42,8 @@ def guardar_batch_bronze(records: list, dataset_name: str):
 
         datos = sub_df.drop(columns=["_part_fecha"])
         tabla = pa.Table.from_pandas(datos, preserve_index=False)
-        nombre_archivo = f"{dataset_name}_stream_{ahora.strftime('%H%M%S_%f')}.parquet"
+        # Nombre determinista basado en el identificador de lote para no acumular infinitos archivos
+        nombre_archivo = f"{dataset_name}_batch_{batch_num:04d}.parquet"
         pq.write_table(tabla, os.path.join(ruta_salida, nombre_archivo), compression="SNAPPY")
 
     return len(records)
@@ -57,10 +57,13 @@ def consumir_hacia_bronze():
 
     buffer = {'transmetro_validaciones': [], 'aerometro_boardings': []}
     conteo_total = {'transmetro_validaciones': 0, 'aerometro_boardings': 0}
+
+    # --- CONTADOR DE LOTES PARA NOMBRES DETERMINISTAS ---
+    batch_counter = {'transmetro_validaciones': 0, 'aerometro_boardings': 0}
     max_batch_size = 20000
 
     # --- control de inactividad ---
-    MAX_EMPTY_POLLS = 5          # ~10s
+    MAX_EMPTY_POLLS = 5  # ~10s
 
     try:
         empty_polls = 0
@@ -73,9 +76,11 @@ def consumir_hacia_bronze():
                 if empty_polls % 4 == 0:
                     for d_name in buffer:
                         if buffer[d_name]:
-                            conteo_total[d_name] += guardar_batch_bronze(buffer[d_name], d_name)
+                            batch_counter[d_name] += 1
+                            conteo_total[d_name] += guardar_batch_bronze(
+                                buffer[d_name], d_name, batch_counter[d_name]
+                            )
                             buffer[d_name] = []
-
 
                 if empty_polls >= MAX_EMPTY_POLLS:
                     print(f"Sin mensajes por {MAX_EMPTY_POLLS * 2}s. Cerrando consumidor...")
@@ -93,33 +98,39 @@ def consumir_hacia_bronze():
             dataset = 'transmetro_validaciones' if msg.topic() == 'transmetro_topic' else 'aerometro_boardings'
             buffer[dataset].append(json.loads(msg.value().decode('utf-8')))
 
+            # Flush por tamaño de buffer
             if len(buffer[dataset]) >= max_batch_size:
-                conteo_total[dataset] += guardar_batch_bronze(buffer[dataset], dataset)
+                batch_counter[dataset] += 1
+                conteo_total[dataset] += guardar_batch_bronze(
+                    buffer[dataset], dataset, batch_counter[dataset]
+                )
                 buffer[dataset] = []
 
     except KeyboardInterrupt:
         pass
     finally:
+        # Flush final de registros remanentes
         for d_name in buffer:
             if buffer[d_name]:
-                conteo_total[d_name] += guardar_batch_bronze(buffer[d_name], d_name)
+                batch_counter[d_name] += 1
+                conteo_total[d_name] += guardar_batch_bronze(
+                    buffer[d_name], d_name, batch_counter[d_name]
+                )
+                buffer[d_name] = []
+
         consumer.close()
 
-        # Asegurar directorio de resultados
+        # Generación de métricas de streaming
         os.makedirs("results", exist_ok=True)
-
-        # 1. Preparar DataFrame con los conteos
         filas = [{"topico_dataset": k, "registros_ingeridos": v} for k, v in conteo_total.items()]
         df_stream = pd.DataFrame(filas)
         total_eventos = df_stream["registros_ingeridos"].sum() if not df_stream.empty else 0
 
-        # 2. Guardar métricas tabulares (.csv)
-        ruta_csv = f"results/fase1_1.1_ingesta_streaming_conteos.csv"
+        ruta_csv = "results/fase1_1.1_ingesta_streaming_conteos.csv"
         df_stream.to_csv(ruta_csv, index=False, encoding="utf-8")
         print(f"Métricas de streaming guardadas en: {ruta_csv}")
 
-        # 3. Guardar reporte documental (.md)
-        ruta_md = f"results/fase1_1.1_ingesta_streaming_resumen.md"
+        ruta_md = "results/fase1_1.1_ingesta_streaming_resumen.md"
         with open(ruta_md, "w", encoding="utf-8") as f:
             f.write("# Reporte de Ingesta Streaming (Subfase 1.1)\n\n")
             f.write(f"- **Origen:** Consumidor Kafka (Tópicos Transmetro y Aerómetro)\n")

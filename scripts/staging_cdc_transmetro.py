@@ -11,7 +11,7 @@ conn = psycopg2.connect(
     host=os.getenv("DB_HOST", "localhost"),
     port=os.getenv("DB_PORT", "5432"),
     user=os.getenv("DB_USER", "amt_admin"),
-    password=os.getenv("DB_PASSWORD", "amt_secure_pass"),
+    password=os.getenv("DB_PASSWORD"),
     dbname=os.getenv("DB_NAME", "amt_dw"),
 )
 cursor = conn.cursor()
@@ -49,15 +49,24 @@ cursor.execute("""
 conn.commit()
 
 # ---------------
-# 2. Carga masiva
+# 2. Carga masiva (desde Bronze Parquet)
 # ---------------
-df_cdc = pd.read_csv(
-    "./scripts/datos_red/cdc_padron_usuarios.csv",
-    dtype={"tarjeta": "string", "perfil": "string",
-           "zona_residencia": "string", "estado": "string",
-           "op": "string"},
-    parse_dates=["commit_ts"],
-)
+from bronze_reader import leer_parquet_bronze
+
+df_cdc = leer_parquet_bronze("cdc_padron_usuarios")
+
+# Asegurar tipos y formato
+df_cdc["tarjeta"] = df_cdc["tarjeta"].astype("string")
+df_cdc["perfil"] = df_cdc["perfil"].astype("string")
+df_cdc["zona_residencia"] = df_cdc["zona_residencia"].astype("string")
+df_cdc["estado"] = df_cdc["estado"].astype("string")
+df_cdc["op"] = df_cdc["op"].astype("string").str.strip().str.upper()
+df_cdc["commit_ts"] = pd.to_datetime(df_cdc["commit_ts"])
+df_cdc = df_cdc.sort_values("seq").reset_index(drop=True)
+
+# Mantener las columnas exactas esperadas por la tabla
+df_cdc = df_cdc[["seq", "commit_ts", "op", "tarjeta", "perfil", "zona_residencia", "estado"]]
+
 df_cdc = df_cdc.sort_values("seq").reset_index(drop=True)
 df_cdc["op"] = df_cdc["op"].str.strip().str.upper()
 

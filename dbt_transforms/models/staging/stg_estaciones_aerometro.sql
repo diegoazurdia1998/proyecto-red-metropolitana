@@ -6,5 +6,5 @@ SELECT
     'Aerometro' AS sistema_modo,
     {{ normalizar_zona('district') }} AS zona_normalizada,
     TRIM(axis)::varchar AS linea_ruta
-FROM {{ ref('am_estaciones') }}
+FROM {{ source('staging','am_estaciones') }}
 WHERE station_code IS NOT NULL

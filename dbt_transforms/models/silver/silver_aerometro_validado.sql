@@ -28,7 +28,7 @@ clasificado AS (
         CASE
             WHEN station_code IS NULL OR TRIM(station_code) = ''
                 THEN 'PARADA_NULA'
-            WHEN timestamp_local > CURRENT_TIMESTAMP
+            WHEN timestamp_local > '{{ var("fecha_corte_referencia", "2026-07-15 23:59:59") }}'::timestamp
                 THEN 'FECHA_FUTURA'
             WHEN prev_ts IS NOT NULL AND EXTRACT(EPOCH FROM (timestamp_local - prev_ts)) <= 120
                 THEN 'DUPLICADO_TORNIQUETE'

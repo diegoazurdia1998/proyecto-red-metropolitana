@@ -9,7 +9,7 @@ conn = psycopg2.connect(
     host=os.getenv("DB_HOST", "localhost"),
     port=os.getenv("DB_PORT", "5432"),
     user=os.getenv("DB_USER", "amt_admin"),
-    password=os.getenv("DB_PASSWORD", "amt_secure_pass"),
+    password=os.getenv("DB_PASSWORD"),
     dbname=os.getenv("DB_NAME", "amt_dw")
 )
 cursor = conn.cursor()

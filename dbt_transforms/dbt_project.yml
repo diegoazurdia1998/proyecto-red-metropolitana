@@ -30,3 +30,6 @@ models:
 seeds:
   dbt_red_metropolitana:
     +schema: staging
+
+vars:
+  fecha_corte_referencia: '2026-07-15 23:59:59'

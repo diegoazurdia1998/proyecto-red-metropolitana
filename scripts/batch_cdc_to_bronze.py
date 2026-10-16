@@ -1,5 +1,6 @@
 import os
 import json
+import gc
 import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
@@ -20,7 +21,6 @@ def escribir_parquet_particionado(df: pd.DataFrame, dataset_name: str, date_col:
     df["source_file"] = f"{dataset_name}"
 
     if date_col and date_col in df.columns:
-        # Extraer YYYY/MM/DD para partición física
         fechas = pd.to_datetime(df[date_col], errors="coerce").dt.strftime("%Y/%m/%d")
         df["_part_fecha"] = fechas.fillna(ahora.strftime("%Y/%m/%d"))
     else:
@@ -32,9 +32,9 @@ def escribir_parquet_particionado(df: pd.DataFrame, dataset_name: str, date_col:
         ruta_salida = os.path.join(BRONZE_DIR, dataset_name, particion)
         asegurar_directorio(ruta_salida)
 
-        datos_limpios = sub_df.drop(columns=["_part_fecha"])
+        datos_limpios = sub_df.drop(columns=["_part_fecha", "_temp_fecha"], errors="ignore")
         tabla = pa.Table.from_pandas(datos_limpios, preserve_index=False)
-        nombre_archivo = f"{dataset_name}_{ahora.strftime('%H%M%S')}.parquet"
+        nombre_archivo = f"{dataset_name}.parquet"
         pq.write_table(tabla, os.path.join(ruta_salida, nombre_archivo), compression="SNAPPY")
 
     return len(df)
@@ -56,9 +56,17 @@ def procesar_transurbano():
     ruta = os.path.join(DATOS_RED_DIR, "transurbano_transacciones.csv")
     df = pd.read_csv(ruta)
     # Parsear temporalmente para partición física
-    df["_temp_fecha"] = pd.to_datetime(df["fecha"], format="%d/%m/%Y", errors="coerce")
-    total = escribir_parquet_particionado(df.drop(columns=["_temp_fecha"]), "transurbano_transacciones",
-                                          date_col="_temp_fecha")
+    df["_temp_fecha"] = pd.to_datetime(
+        df["fecha"],
+        format="%d/%m/%Y",
+        errors="coerce"
+    )
+    total = escribir_parquet_particionado(
+        df,
+        "transurbano_transacciones",
+        date_col="_temp_fecha"
+    )
+
     return {"transurbano_transacciones.csv": total}
 
 
@@ -73,7 +81,7 @@ def procesar_metroriel_jsonl():
 
     df = pd.json_normalize(registros)
     # Particionar por fecha de inicio o abordaje si existe
-    col_fecha = [c for c in df.columns if "fecha" in c.lower() or "timestamp" in c.lower() or "inicio" in c.lower()]
+    col_fecha = [c for c in df.columns if "fecha" in c.lower() or "timestamp" in c.lower() or "ts" in c.lower()]
     target_col = col_fecha[0] if col_fecha else None
 
     total = escribir_parquet_particionado(df, "metroriel_viajes", date_col=target_col)
@@ -91,9 +99,13 @@ def procesar_cdc_padron():
 if __name__ == "__main__":
     conteos_totales = {}
     conteos_totales.update(procesar_catalogos())
+    gc.collect()
     conteos_totales.update(procesar_transurbano())
+    gc.collect()
     conteos_totales.update(procesar_metroriel_jsonl())
+    gc.collect()
     conteos_totales.update(procesar_cdc_padron())
+    gc.collect()
 
     # Asegurar directorio de resultados
     os.makedirs("results", exist_ok=True)

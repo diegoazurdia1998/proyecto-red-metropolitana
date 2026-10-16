@@ -21,7 +21,8 @@ clasificado AS (
                 THEN 'PARADA_NULA'
             WHEN estacion_destino IS NULL OR timestamp_destino IS NULL
                 THEN 'VIAJE_SIN_SALIDA'
-            WHEN timestamp_origen > CURRENT_TIMESTAMP OR timestamp_destino > CURRENT_TIMESTAMP
+            WHEN timestamp_origen > '{{ var("fecha_corte_referencia", "2026-07-15 23:59:59") }}'::timestamp
+              OR timestamp_destino > '{{ var("fecha_corte_referencia", "2026-07-15 23:59:59") }}'::timestamp
                 THEN 'FECHA_FUTURA'
             ELSE 'VALIDO'
         END AS regla_calidad

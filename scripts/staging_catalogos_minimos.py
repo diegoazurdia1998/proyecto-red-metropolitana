@@ -10,7 +10,7 @@ conn = psycopg2.connect(
     host=os.getenv("DB_HOST", "localhost"),
     port=os.getenv("DB_PORT", "5432"),
     user=os.getenv("DB_USER", "amt_admin"),
-    password=os.getenv("DB_PASSWORD", "amt_secure_pass"),
+    password=os.getenv("DB_PASSWORD"),
     dbname=os.getenv("DB_NAME", "amt_dw")
 )
 cursor = conn.cursor()
@@ -35,36 +35,113 @@ cursor.execute("""
 """)
 conn.commit()
 
-# 1. Transurbano (columna exacta: num_tarjeta)
-df_tu = pd.read_csv("./scripts/datos_red/transurbano_transacciones.csv", usecols=["num_tarjeta"])
-tu_keys = df_tu["num_tarjeta"].dropna().astype(str).str.strip().unique()
-for k in tu_keys:
-    cursor.execute("INSERT INTO staging.catalogo_minimo_transurbano (num_tarjeta) VALUES (%s) ON CONFLICT DO NOTHING;",
-                   (k,))
+from bronze_reader import leer_parquet_bronze
 
-# 2. MetroRiel (columna exacta en JSONL: card)
-mr_keys = set()
-with open("./scripts/datos_red/metroriel_viajes.jsonl", "r", encoding="utf-8") as f:
-    for line in f:
-        if line.strip():
-            row = json.loads(line)
-            card = row.get("card")
-            if card:
-                mr_keys.add(str(card).strip())
+# 1. Transurbano (desde Bronze Parquet)
+print("Cargando transurbano_transacciones...", flush=True)
 
-for k in mr_keys:
-    cursor.execute("INSERT INTO staging.catalogo_minimo_metroriel (card) VALUES (%s) ON CONFLICT DO NOTHING;", (k,))
+df_tu = leer_parquet_bronze("transurbano_transacciones")
+print(f"   {len(df_tu):,} registros leídos", flush=True)
 
-# 3. Aerómetro (columna exacta: user_hash)
-df_am = pd.read_csv("./scripts/datos_red/aerometro_boardings.csv", usecols=["user_hash"])
-am_keys = df_am["user_hash"].dropna().astype(str).str.strip().unique()
-for k in am_keys:
+tu_keys = (
+    df_tu["num_tarjeta"]
+    .dropna()
+    .astype(str)
+    .str.strip()
+    .unique()
+)
+
+print(f"   {len(tu_keys):,} usuarios únicos encontrados", flush=True)
+
+for i, k in enumerate(tu_keys, start=1):
     cursor.execute(
-        "INSERT INTO staging.catalogo_minimo_aerometro (user_hash) VALUES (%s) ON CONFLICT DO NOTHING;",
+        """
+        INSERT INTO staging.catalogo_minimo_transurbano (num_tarjeta)
+        VALUES (%s)
+        ON CONFLICT DO NOTHING;
+        """,
         (k,)
     )
 
+    if i % 10000 == 0:
+        print(
+            f"   [Transurbano] {i:,}/{len(tu_keys):,} usuarios",
+            flush=True
+        )
+
+print("   Transurbano completado", flush=True)
+
+# 2. MetroRiel (desde Bronze Parquet)
+print("Cargando metroriel_viajes...", flush=True)
+
+df_mr = leer_parquet_bronze("metroriel_viajes")
+print(f"   {len(df_mr):,} registros leídos", flush=True)
+
+mr_keys = (
+    df_mr["card"]
+    .dropna()
+    .astype(str)
+    .str.strip()
+    .unique()
+)
+
+print(f"   {len(mr_keys):,} usuarios únicos encontrados", flush=True)
+
+for i, k in enumerate(mr_keys, start=1):
+    cursor.execute(
+        """
+        INSERT INTO staging.catalogo_minimo_metroriel (card)
+        VALUES (%s)
+        ON CONFLICT DO NOTHING;
+        """,
+        (k,)
+    )
+
+    if i % 10000 == 0:
+        print(
+            f"   [MetroRiel] {i:,}/{len(mr_keys):,} usuarios",
+            flush=True
+        )
+
+print("   MetroRiel completado", flush=True)
+
+# 3. Aerómetro (desde Bronze Parquet)
+print("Cargando aerometro_boardings...", flush=True)
+
+df_am = leer_parquet_bronze("aerometro_boardings")
+print(f"   {len(df_am):,} registros leídos", flush=True)
+
+am_keys = (
+    df_am["user_hash"]
+    .dropna()
+    .astype(str)
+    .str.strip()
+    .unique()
+)
+
+print(f"   {len(am_keys):,} usuarios únicos encontrados", flush=True)
+
+for i, k in enumerate(am_keys, start=1):
+    cursor.execute(
+        """
+        INSERT INTO staging.catalogo_minimo_aerometro (user_hash)
+        VALUES (%s)
+        ON CONFLICT DO NOTHING;
+        """,
+        (k,)
+    )
+
+    if i % 10000 == 0:
+        print(
+            f"   [Aerómetro] {i:,}/{len(am_keys):,} usuarios",
+            flush=True
+        )
+
+print("   Aerómetro completado", flush=True)
+
+print("Confirmando cambios...", flush=True)
 conn.commit()
+print("Commit completado", flush=True)
 
 
 os.makedirs("results", exist_ok=True)

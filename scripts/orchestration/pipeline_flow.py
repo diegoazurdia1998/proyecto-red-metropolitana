@@ -1,6 +1,7 @@
 import os
 import sys
 import subprocess
+import shutil
 import psycopg2
 from dotenv import load_dotenv
 from prefect import task, flow
@@ -47,14 +48,25 @@ def get_db_connection():
         host=os.getenv("DB_HOST", "localhost"),
         port=os.getenv("DB_PORT", "5432"),
         user=os.getenv("DB_USER", "amt_admin"),
-        password=os.getenv("DB_PASSWORD", "amt_secure_pass"),
+        password=os.getenv("DB_PASSWORD"),
         dbname=os.getenv("DB_NAME", "amt_dw")
     )
 
+def limpiar_bronze():
+    BRONZE_DIR="./bronze"
+    if os.path.exists(BRONZE_DIR):
+        shutil.rmtree(BRONZE_DIR)
+
+    os.makedirs(BRONZE_DIR, exist_ok=True)
+
 @task(name="Ingesta Capa Bronze (Batch/CDC)")
 def task_ingesta_bronze():
+    limpiar_bronze()
     """Ejecuta la ingesta batch y CDC hacia Parquet en Bronze."""
-    run_script("scripts/batch_cdc_to_bronze.py", label="Bronze")
+    run_script("scripts/batch_cdc_to_bronze.py", label="Bronze Batch CDC")
+    run_script("scripts/kafka_producer_stream.py", label="Bronze Stream Producer")
+    run_script("scripts/kafka_consumer_to_bronze.py", label="Bronze Stream Consumer")
+
     return "Bronze Batch/CDC completado."
 
 @task(name="Vaciado y Carga de Staging Efímero")
@@ -81,6 +93,7 @@ def task_ejecutar_dbt():
 @task(name="Enrutamiento a Cuarentena y Calidad")
 def task_cuarentena():
     """Enruta registros inválidos hacia silver.cuarentena y calcula métricas."""
+    run_script("scripts/crear_cuarentena.py", label="Cuarentena y Calidad")
     run_script("scripts/cargar_cuarentena_y_metricas.py", label="Cuarentena y Calidad")
     return "Cuarentena procesada correctamente."
 
@@ -95,8 +108,8 @@ def task_medir_conteos(corrida_label: str):
         ("silver", "snap_padron_transmetro"),
         ("gold", "dim_usuario"),
         ("gold", "dim_tiempo"),
-        ("gold", "fact_abordajes"),
-        ("gold", "fact_viajes_metroriel")
+        ("gold", "dim_estacion_parada"),
+        ("gold", "fact_abordajes")
     ]
 
     conteos = {}

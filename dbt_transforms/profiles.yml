@@ -5,7 +5,7 @@ dbt_red_metropolitana:
       type: postgres
       host: "{{ env_var('DB_HOST', 'localhost') }}"
       user: "{{ env_var('DB_USER', 'amt_admin') }}"
-      password: "{{ env_var('DB_PASSWORD', 'amt_secure_pass') }}"
+      password: "{{ env_var('DB_PASSWORD') }}"
       port: "{{ env_var('DB_PORT', '5432') | int }}"
       dbname: "{{ env_var('DB_NAME', 'amt_dw') }}"
       schema: public

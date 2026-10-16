@@ -1,11 +1,12 @@
 from pipeline_flow import red_metropolitana_pipeline
 import pandas as pd
 import os
+import gc
 
 def ejecutar_prueba_idempotencia():
     print("--- INICIANDO CORRIDA 1 ---")
     conteos_1 = red_metropolitana_pipeline(corrida_label="CORRIDA 1")
-
+    gc.collect()
     print("\n--- INICIANDO CORRIDA 2 (INMEDIATA) ---")
     conteos_2 = red_metropolitana_pipeline(corrida_label="CORRIDA 2")
 

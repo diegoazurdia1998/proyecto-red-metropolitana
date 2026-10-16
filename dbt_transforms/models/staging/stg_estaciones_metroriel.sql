@@ -6,5 +6,5 @@ SELECT
     'MetroRiel' AS sistema_modo,
     {{ normalizar_zona('zona_nombre') }} AS zona_normalizada,
     'MetroRiel Troncal' AS linea_ruta
-FROM {{ ref('mr_estaciones') }}
+FROM {{ source('staging','mr_estaciones') }}
 WHERE id_estacion IS NOT NULL

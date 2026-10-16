@@ -6,5 +6,5 @@ SELECT
     'Transurbano' AS sistema_modo,
     {{ normalizar_zona('sector') }} AS zona_normalizada,
     TRIM(ruta)::varchar AS linea_ruta
-FROM {{ ref('tu_paradas') }}
+FROM {{ source('staging','tu_paradas') }}
 WHERE cod_parada IS NOT NULL

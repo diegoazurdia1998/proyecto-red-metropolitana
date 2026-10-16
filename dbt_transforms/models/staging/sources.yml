@@ -8,6 +8,10 @@ sources:
       - name: transmetro_validaciones
       - name: transurbano_transacciones
       - name: metroriel_viajes
+      - name: tm_estaciones
+      - name: tu_paradas
+      - name: mr_estaciones
+      - name: am_estaciones
       - name: aerometro_boardings
       - name: catalogo_minimo_transurbano
       - name: catalogo_minimo_metroriel
