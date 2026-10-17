@@ -1022,6 +1022,7 @@
               <approx-count>1688942</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='LEN_RUS' />
+              <object-id>[fact_abordajes (gold.fact_abordajes)_2A306024461B472096A55C75ED983C75]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>sk_usuario</remote-name>
@@ -1036,6 +1037,7 @@
               <approx-count>281993</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='LEN_RUS' />
+              <object-id>[fact_abordajes (gold.fact_abordajes)_2A306024461B472096A55C75ED983C75]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>sk_tiempo</remote-name>
@@ -1049,6 +1051,7 @@
               <aggregation>Sum</aggregation>
               <approx-count>928</approx-count>
               <contains-null>true</contains-null>
+              <object-id>[fact_abordajes (gold.fact_abordajes)_2A306024461B472096A55C75ED983C75]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>sk_estacion</remote-name>
@@ -1063,6 +1066,7 @@
               <approx-count>468</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='LEN_RUS' />
+              <object-id>[fact_abordajes (gold.fact_abordajes)_2A306024461B472096A55C75ED983C75]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>codigo_estacion</remote-name>
@@ -1077,6 +1081,7 @@
               <approx-count>468</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='LEN_RUS' />
+              <object-id>[fact_abordajes (gold.fact_abordajes)_2A306024461B472096A55C75ED983C75]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>linea_ruta</remote-name>
@@ -1091,6 +1096,7 @@
               <approx-count>52</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='LEN_RUS' />
+              <object-id>[fact_abordajes (gold.fact_abordajes)_2A306024461B472096A55C75ED983C75]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>sistema_modo</remote-name>
@@ -1105,6 +1111,7 @@
               <approx-count>4</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='LEN_RUS' />
+              <object-id>[fact_abordajes (gold.fact_abordajes)_2A306024461B472096A55C75ED983C75]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>timestamp_local</remote-name>
@@ -1118,6 +1125,7 @@
               <aggregation>Year</aggregation>
               <approx-count>1484173</approx-count>
               <contains-null>true</contains-null>
+              <object-id>[fact_abordajes (gold.fact_abordajes)_2A306024461B472096A55C75ED983C75]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>monto_gtq</remote-name>
@@ -1131,6 +1139,7 @@
               <aggregation>Sum</aggregation>
               <approx-count>8</approx-count>
               <contains-null>true</contains-null>
+              <object-id>[fact_abordajes (gold.fact_abordajes)_2A306024461B472096A55C75ED983C75]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>cantidad_abordajes</remote-name>
@@ -1144,6 +1153,7 @@
               <aggregation>Sum</aggregation>
               <approx-count>1</approx-count>
               <contains-null>true</contains-null>
+              <object-id>[fact_abordajes (gold.fact_abordajes)_2A306024461B472096A55C75ED983C75]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>sk_estacion</remote-name>
@@ -1158,6 +1168,7 @@
               <approx-count>468</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='LEN_RUS' />
+              <object-id>[dim_estacion_parada (gold.dim_estacion_parada)_FF361FEF7AB74B92ADA0606C0183AC80]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>codigo_estacion</remote-name>
@@ -1172,6 +1183,7 @@
               <approx-count>468</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='LEN_RUS' />
+              <object-id>[dim_estacion_parada (gold.dim_estacion_parada)_FF361FEF7AB74B92ADA0606C0183AC80]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>nombre_estacion</remote-name>
@@ -1186,6 +1198,7 @@
               <approx-count>468</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='LEN_RUS' />
+              <object-id>[dim_estacion_parada (gold.dim_estacion_parada)_FF361FEF7AB74B92ADA0606C0183AC80]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>sistema_modo</remote-name>
@@ -1200,6 +1213,7 @@
               <approx-count>4</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='LEN_RUS' />
+              <object-id>[dim_estacion_parada (gold.dim_estacion_parada)_FF361FEF7AB74B92ADA0606C0183AC80]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>zona_normalizada</remote-name>
@@ -1214,6 +1228,7 @@
               <approx-count>15</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='LEN_RUS' />
+              <object-id>[dim_estacion_parada (gold.dim_estacion_parada)_FF361FEF7AB74B92ADA0606C0183AC80]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>fid</remote-name>
@@ -1227,6 +1242,7 @@
               <aggregation>Sum</aggregation>
               <approx-count>25</approx-count>
               <contains-null>true</contains-null>
+              <object-id>[gt_municipios.geojson_FE9B18340574417ABAD9C8E1CBD3CAE5]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>GID_2</remote-name>
@@ -1241,6 +1257,7 @@
               <approx-count>25</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='binary' />
+              <object-id>[gt_municipios.geojson_FE9B18340574417ABAD9C8E1CBD3CAE5]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>GID_0</remote-name>
@@ -1255,6 +1272,7 @@
               <approx-count>1</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='binary' />
+              <object-id>[gt_municipios.geojson_FE9B18340574417ABAD9C8E1CBD3CAE5]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>COUNTRY</remote-name>
@@ -1269,6 +1287,7 @@
               <approx-count>1</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='binary' />
+              <object-id>[gt_municipios.geojson_FE9B18340574417ABAD9C8E1CBD3CAE5]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>GID_1</remote-name>
@@ -1283,6 +1302,7 @@
               <approx-count>1</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='binary' />
+              <object-id>[gt_municipios.geojson_FE9B18340574417ABAD9C8E1CBD3CAE5]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>NAME_1</remote-name>
@@ -1297,6 +1317,7 @@
               <approx-count>1</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='binary' />
+              <object-id>[gt_municipios.geojson_FE9B18340574417ABAD9C8E1CBD3CAE5]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>NL_NAME_1</remote-name>
@@ -1311,6 +1332,7 @@
               <approx-count>1</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='binary' />
+              <object-id>[gt_municipios.geojson_FE9B18340574417ABAD9C8E1CBD3CAE5]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>NAME_2</remote-name>
@@ -1325,6 +1347,7 @@
               <approx-count>25</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='binary' />
+              <object-id>[gt_municipios.geojson_FE9B18340574417ABAD9C8E1CBD3CAE5]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>VARNAME_2</remote-name>
@@ -1339,6 +1362,7 @@
               <approx-count>1</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='binary' />
+              <object-id>[gt_municipios.geojson_FE9B18340574417ABAD9C8E1CBD3CAE5]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>NL_NAME_2</remote-name>
@@ -1353,6 +1377,7 @@
               <approx-count>1</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='binary' />
+              <object-id>[gt_municipios.geojson_FE9B18340574417ABAD9C8E1CBD3CAE5]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>TYPE_2</remote-name>
@@ -1367,6 +1392,7 @@
               <approx-count>1</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='binary' />
+              <object-id>[gt_municipios.geojson_FE9B18340574417ABAD9C8E1CBD3CAE5]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>ENGTYPE_2</remote-name>
@@ -1381,6 +1407,7 @@
               <approx-count>1</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='binary' />
+              <object-id>[gt_municipios.geojson_FE9B18340574417ABAD9C8E1CBD3CAE5]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>CC_2</remote-name>
@@ -1395,6 +1422,7 @@
               <approx-count>1</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='binary' />
+              <object-id>[gt_municipios.geojson_FE9B18340574417ABAD9C8E1CBD3CAE5]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>HASC_2</remote-name>
@@ -1409,6 +1437,7 @@
               <approx-count>1</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='binary' />
+              <object-id>[gt_municipios.geojson_FE9B18340574417ABAD9C8E1CBD3CAE5]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>zona_normalizada</remote-name>
@@ -1423,6 +1452,7 @@
               <approx-count>25</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='binary' />
+              <object-id>[gt_municipios.geojson_FE9B18340574417ABAD9C8E1CBD3CAE5]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>Geometry</remote-name>
@@ -1436,6 +1466,7 @@
               <aggregation>Collect</aggregation>
               <approx-count>25</approx-count>
               <contains-null>true</contains-null>
+              <object-id>[gt_municipios.geojson_FE9B18340574417ABAD9C8E1CBD3CAE5]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>sk_tiempo</remote-name>
@@ -1449,6 +1480,7 @@
               <aggregation>Sum</aggregation>
               <approx-count>2564</approx-count>
               <contains-null>true</contains-null>
+              <object-id>[dim_tiempo (gold.dim_tiempo)_C82501EA8C914A199E1E8B1E67D2B638]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>timestamp_local</remote-name>
@@ -1462,6 +1494,7 @@
               <aggregation>Year</aggregation>
               <approx-count>2564</approx-count>
               <contains-null>true</contains-null>
+              <object-id>[dim_tiempo (gold.dim_tiempo)_C82501EA8C914A199E1E8B1E67D2B638]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>fecha</remote-name>
@@ -1475,6 +1508,7 @@
               <aggregation>Year</aggregation>
               <approx-count>108</approx-count>
               <contains-null>true</contains-null>
+              <object-id>[dim_tiempo (gold.dim_tiempo)_C82501EA8C914A199E1E8B1E67D2B638]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>anio</remote-name>
@@ -1488,6 +1522,7 @@
               <aggregation>Sum</aggregation>
               <approx-count>2</approx-count>
               <contains-null>true</contains-null>
+              <object-id>[dim_tiempo (gold.dim_tiempo)_C82501EA8C914A199E1E8B1E67D2B638]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>mes</remote-name>
@@ -1501,6 +1536,7 @@
               <aggregation>Sum</aggregation>
               <approx-count>5</approx-count>
               <contains-null>true</contains-null>
+              <object-id>[dim_tiempo (gold.dim_tiempo)_C82501EA8C914A199E1E8B1E67D2B638]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>dia</remote-name>
@@ -1514,6 +1550,7 @@
               <aggregation>Sum</aggregation>
               <approx-count>32</approx-count>
               <contains-null>true</contains-null>
+              <object-id>[dim_tiempo (gold.dim_tiempo)_C82501EA8C914A199E1E8B1E67D2B638]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>hora</remote-name>
@@ -1527,6 +1564,7 @@
               <aggregation>Sum</aggregation>
               <approx-count>25</approx-count>
               <contains-null>true</contains-null>
+              <object-id>[dim_tiempo (gold.dim_tiempo)_C82501EA8C914A199E1E8B1E67D2B638]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>dia_nombre</remote-name>
@@ -1541,6 +1579,7 @@
               <approx-count>8</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='LEN_RUS' />
+              <object-id>[dim_tiempo (gold.dim_tiempo)_C82501EA8C914A199E1E8B1E67D2B638]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>es_dia_habil</remote-name>
@@ -1554,6 +1593,7 @@
               <aggregation>Count</aggregation>
               <approx-count>2</approx-count>
               <contains-null>true</contains-null>
+              <object-id>[dim_tiempo (gold.dim_tiempo)_C82501EA8C914A199E1E8B1E67D2B638]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>es_hora_pico</remote-name>
@@ -1567,6 +1607,7 @@
               <aggregation>Count</aggregation>
               <approx-count>2</approx-count>
               <contains-null>true</contains-null>
+              <object-id>[dim_tiempo (gold.dim_tiempo)_C82501EA8C914A199E1E8B1E67D2B638]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>sk_usuario</remote-name>
@@ -1581,6 +1622,7 @@
               <approx-count>63782</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='LEN_RUS' />
+              <object-id>[dim_usuario (gold.dim_usuario)_EC9FD5661EED4DF1A598FD856CB1FA7D]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>usuario_pseudonimo</remote-name>
@@ -1595,6 +1637,7 @@
               <approx-count>63782</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='LEN_RUS' />
+              <object-id>[dim_usuario (gold.dim_usuario)_EC9FD5661EED4DF1A598FD856CB1FA7D]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>sistema_origen_registro</remote-name>
@@ -1609,6 +1652,7 @@
               <approx-count>4</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='LEN_RUS' />
+              <object-id>[dim_usuario (gold.dim_usuario)_EC9FD5661EED4DF1A598FD856CB1FA7D]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>perfil</remote-name>
@@ -1623,6 +1667,7 @@
               <approx-count>5</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='LEN_RUS' />
+              <object-id>[dim_usuario (gold.dim_usuario)_EC9FD5661EED4DF1A598FD856CB1FA7D]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>zona_residencia</remote-name>
@@ -1637,6 +1682,7 @@
               <approx-count>17</approx-count>
               <contains-null>true</contains-null>
               <collation flag='0' name='LEN_RUS' />
+              <object-id>[dim_usuario (gold.dim_usuario)_EC9FD5661EED4DF1A598FD856CB1FA7D]</object-id>
             </metadata-record>
             <metadata-record class='column'>
               <remote-name>es_activa</remote-name>
@@ -1650,6 +1696,7 @@
               <aggregation>Count</aggregation>
               <approx-count>2</approx-count>
               <contains-null>true</contains-null>
+              <object-id>[dim_usuario (gold.dim_usuario)_EC9FD5661EED4DF1A598FD856CB1FA7D]</object-id>
             </metadata-record>
           </metadata-records>
         </connection>
@@ -3666,8 +3713,8 @@
         <devicelayout auto-generated='true' name='Phone'>
           <size maxheight='750' minheight='750' sizing-mode='vscroll' />
           <zones>
-            <zone h='100000' id='39' type-v2='layout-basic' w='100000' x='0' y='0'>
-              <zone h='98352' id='38' param='vert' type-v2='layout-flow' w='99034' x='483' y='824'>
+            <zone h='100000' id='43' type-v2='layout-basic' w='100000' x='0' y='0'>
+              <zone h='84000' id='42' param='vert' type-v2='layout-flow' w='84000' x='8000' y='8000'>
                 <zone forceUpdate='true' h='24097' id='6' type-v2='text' w='99034' x='483' y='824'>
                   <formatted-text>
                     <run bold='true' fontalignment='1' fontsize='16'>AGENCIA METROPOLITANA DE TRANSPORTE</run>
@@ -3919,8 +3966,8 @@
         <devicelayout auto-generated='true' name='Phone'>
           <size maxheight='1350' minheight='1350' sizing-mode='vscroll' />
           <zones>
-            <zone h='100000' id='46' type-v2='layout-basic' w='100000' x='0' y='0'>
-              <zone h='98352' id='45' param='vert' type-v2='layout-flow' w='99034' x='483' y='824'>
+            <zone h='100000' id='50' type-v2='layout-basic' w='100000' x='0' y='0'>
+              <zone h='84000' id='49' param='vert' type-v2='layout-flow' w='84000' x='8000' y='8000'>
                 <zone forceUpdate='true' h='10316' id='7' type-v2='text' w='80382' x='483' y='824'>
                   <formatted-text>
                     <run bold='true' fontalignment='1' fontsize='16'>DEMANDA POR MODO, ZONA Y HORA</run>
@@ -4092,7 +4139,7 @@
                 <formatted-text>
                   <run>Æ&#10;</run>
                   <run fontcolor='#000000' fontsize='14'>De acuerdo con los registros analizados, las zonas </run>
-                  <run bold='true' fontcolor='#000000' fontsize='14'>3, 5, 14, 15 y 21</run>
+                  <run bold='true' fontcolor='#000000' fontsize='14'>2, 3, 5, 14, 15, 16, 19, 21, 24 y 25</run>
                   <run fontcolor='#000000' fontsize='14'> no presentan estaciones asociadas a ninguno de los modos de transporte considerados. Por lo tanto, estas zonas figuran con </run>
                   <run bold='true' fontcolor='#000000' fontsize='14'>cobertura nula</run>
                   <run fontcolor='#000000' fontsize='14'> dentro del alcance de los datos disponibles.</run>
@@ -4152,8 +4199,8 @@
         <devicelayout auto-generated='true' name='Phone'>
           <size maxheight='1300' minheight='1300' sizing-mode='vscroll' />
           <zones>
-            <zone h='100000' id='45' type-v2='layout-basic' w='100000' x='0' y='0'>
-              <zone h='98352' id='44' param='vert' type-v2='layout-flow' w='99034' x='483' y='824'>
+            <zone h='100000' id='49' type-v2='layout-basic' w='100000' x='0' y='0'>
+              <zone h='98352' id='48' param='vert' type-v2='layout-flow' w='99034' x='483' y='824'>
                 <zone forceUpdate='true' h='8443' id='13' type-v2='text' w='99034' x='483' y='824'>
                   <formatted-text>
                     <run bold='true' fontalignment='1' fontsize='16'>COBERTURA Y ZONAS DESATENDIDAS</run>
@@ -4242,7 +4289,7 @@
                   <formatted-text>
                     <run>Æ&#10;</run>
                     <run fontcolor='#000000' fontsize='14'>De acuerdo con los registros analizados, las zonas </run>
-                    <run bold='true' fontcolor='#000000' fontsize='14'>3, 5, 14, 15 y 21</run>
+                    <run bold='true' fontcolor='#000000' fontsize='14'>2, 3, 5, 14, 15, 16, 19, 21, 24 y 25</run>
                     <run fontcolor='#000000' fontsize='14'> no presentan estaciones asociadas a ninguno de los modos de transporte considerados. Por lo tanto, estas zonas figuran con </run>
                     <run bold='true' fontcolor='#000000' fontsize='14'>cobertura nula</run>
                     <run fontcolor='#000000' fontsize='14'> dentro del alcance de los datos disponibles.</run>
@@ -4361,8 +4408,8 @@
         <devicelayout auto-generated='true' name='Phone'>
           <size maxheight='750' minheight='750' sizing-mode='vscroll' />
           <zones>
-            <zone h='100000' id='35' type-v2='layout-basic' w='100000' x='0' y='0'>
-              <zone h='98352' id='34' param='vert' type-v2='layout-flow' w='99034' x='483' y='824'>
+            <zone h='100000' id='39' type-v2='layout-basic' w='100000' x='0' y='0'>
+              <zone h='84000' id='38' param='vert' type-v2='layout-flow' w='84000' x='8000' y='8000'>
                 <zone h='9166' id='17' type-v2='dashboard-object' w='18618' x='81318' y='206'>
                   <button action='tabdoc:goto-sheet window-id=&quot;{39558EBD-0247-4269-B61B-9B82418442E3}&quot;' button-type='text'>
                     <button-visual-state>
@@ -4502,7 +4549,7 @@
               <format attr='margin' value='4' />
             </zone-style>
           </zone>
-          <zone h='52111' id='19' name='4. Evaluacion Corredor MetroRiel' w='88791' x='483' y='10401'>
+          <zone h='52111' id='19' name='4. Evaluacion Corredor MetroRiel' w='88790' x='483' y='10401'>
             <zone-style>
               <format attr='border-color' value='#000000' />
               <format attr='border-style' value='none' />
@@ -4510,7 +4557,7 @@
               <format attr='margin' value='4' />
             </zone-style>
           </zone>
-          <zone h='12668' id='20' name='4. Evaluacion Corredor MetroRiel' pane-specification-id='0' param='[federated.0gkaodv1giapyd13i4tge1tfxqo5].[none:Calculation_2211168932950028:nk]' type-v2='color' w='10243' x='89274' y='10401'>
+          <zone h='12668' id='20' name='4. Evaluacion Corredor MetroRiel' pane-specification-id='0' param='[federated.0gkaodv1giapyd13i4tge1tfxqo5].[none:Calculation_2211168932950028:nk]' type-v2='color' w='10244' x='89273' y='10401'>
             <zone-style>
               <format attr='border-color' value='#000000' />
               <format attr='border-style' value='none' />
@@ -4518,7 +4565,7 @@
               <format attr='margin' value='4' />
             </zone-style>
           </zone>
-          <zone h='39443' id='24' name='4. Evaluacion Corredor MetroRiel' param='[federated.0gkaodv1giapyd13i4tge1tfxqo5].[none:zona_normalizada:nk]' type-v2='filter' values='database' w='10243' x='89274' y='23069'>
+          <zone h='39443' id='24' name='4. Evaluacion Corredor MetroRiel' param='[federated.0gkaodv1giapyd13i4tge1tfxqo5].[none:zona_normalizada:nk]' type-v2='filter' values='database' w='10244' x='89273' y='23069'>
             <zone-style>
               <format attr='border-color' value='#000000' />
               <format attr='border-style' value='none' />
@@ -4553,8 +4600,8 @@
         <devicelayout auto-generated='true' name='Phone'>
           <size maxheight='950' minheight='950' sizing-mode='vscroll' />
           <zones>
-            <zone h='100000' id='36' type-v2='layout-basic' w='100000' x='0' y='0'>
-              <zone h='98352' id='35' param='vert' type-v2='layout-flow' w='99034' x='483' y='824'>
+            <zone h='100000' id='40' type-v2='layout-basic' w='100000' x='0' y='0'>
+              <zone h='98352' id='39' param='vert' type-v2='layout-flow' w='99034' x='483' y='824'>
                 <zone h='9887' id='18' type-v2='dashboard-object' w='18618' x='81318' y='721'>
                   <button action='tabdoc:goto-sheet window-id=&quot;{39558EBD-0247-4269-B61B-9B82418442E3}&quot;' button-type='text'>
                     <button-visual-state>
@@ -4585,7 +4632,7 @@
                     <format attr='padding' value='0' />
                   </zone-style>
                 </zone>
-                <zone h='39443' id='24' mode='checkdropdown' name='4. Evaluacion Corredor MetroRiel' param='[federated.0gkaodv1giapyd13i4tge1tfxqo5].[none:zona_normalizada:nk]' type-v2='filter' values='database' w='10243' x='89274' y='23069'>
+                <zone h='39443' id='24' mode='checkdropdown' name='4. Evaluacion Corredor MetroRiel' param='[federated.0gkaodv1giapyd13i4tge1tfxqo5].[none:zona_normalizada:nk]' type-v2='filter' values='database' w='10244' x='89273' y='23069'>
                   <zone-style>
                     <format attr='border-color' value='#000000' />
                     <format attr='border-style' value='none' />
@@ -4594,7 +4641,7 @@
                     <format attr='padding' value='0' />
                   </zone-style>
                 </zone>
-                <zone fixed-size='280' h='52111' id='19' is-fixed='true' name='4. Evaluacion Corredor MetroRiel' w='88791' x='483' y='10401'>
+                <zone fixed-size='280' h='52111' id='19' is-fixed='true' name='4. Evaluacion Corredor MetroRiel' w='88790' x='483' y='10401'>
                   <zone-style>
                     <format attr='border-color' value='#000000' />
                     <format attr='border-style' value='none' />
@@ -4603,7 +4650,7 @@
                     <format attr='padding' value='0' />
                   </zone-style>
                 </zone>
-                <zone h='12668' id='20' name='4. Evaluacion Corredor MetroRiel' pane-specification-id='0' param='[federated.0gkaodv1giapyd13i4tge1tfxqo5].[none:Calculation_2211168932950028:nk]' type-v2='color' w='10243' x='89274' y='10401'>
+                <zone h='12668' id='20' name='4. Evaluacion Corredor MetroRiel' pane-specification-id='0' param='[federated.0gkaodv1giapyd13i4tge1tfxqo5].[none:Calculation_2211168932950028:nk]' type-v2='color' w='10244' x='89273' y='10401'>
                   <zone-style>
                     <format attr='border-color' value='#000000' />
                     <format attr='border-style' value='none' />
@@ -5130,7 +5177,7 @@
           <zoom type='fit-width' />
         </viewpoint>
       </viewpoints>
-      <active id='11' />
+      <active id='-1' />
       <simple-id uuid='{39558EBD-0247-4269-B61B-9B82418442E3}' />
     </window>
     <window class='dashboard' name='1. Demanda'>
@@ -5159,10 +5206,10 @@
           </highlight>
         </viewpoint>
       </viewpoints>
-      <active id='8' />
+      <active id='-1' />
       <simple-id uuid='{F1EB5982-9F9D-44C0-BFE6-011B7E531F34}' />
     </window>
-    <window class='dashboard' name='2. Cobertura'>
+    <window class='dashboard' maximized='true' name='2. Cobertura'>
       <viewpoints>
         <viewpoint name='2. Cobertura de Zonas Mapa'>
           <zoom type='entire-view' />
@@ -5204,10 +5251,10 @@
           </highlight>
         </viewpoint>
       </viewpoints>
-      <active id='17' />
+      <active id='-1' />
       <simple-id uuid='{C290FE5E-A993-4741-A5E9-9C8AF0BF2240}' />
     </window>
-    <window class='dashboard' maximized='true' name='4. MetroRiel'>
+    <window class='dashboard' name='4. MetroRiel'>
       <viewpoints>
         <viewpoint name='4. Evaluacion Corredor MetroRiel'>
           <highlight>
