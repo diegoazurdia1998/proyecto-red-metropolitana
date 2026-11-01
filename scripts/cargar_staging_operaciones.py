@@ -217,9 +217,13 @@ cargar_tabla(
 )
 
 # ------------------------------------------------------------------
-# 4. MetroRiel Viajes (JSONL — se procesa en streaming)
+# 4. MetroRiel Viajes (Parquet por batches, sin cargar todo en RAM)
 # ------------------------------------------------------------------
+import glob
+import pyarrow.parquet as pq
+
 print("Cargando staging.metroriel_viajes...", flush=True)
+
 cursor.execute("""
     DROP TABLE IF EXISTS staging.metroriel_viajes;
     CREATE TABLE staging.metroriel_viajes (
@@ -233,61 +237,71 @@ cursor.execute("""
 """)
 conn.commit()
 
-
-df_mr = leer_parquet_bronze("metroriel_viajes")
-
 t0 = time.time()
-lote = []
 insertados = 0
+batch_size = 5000
 
-# Verificar si viene con prefijo 'entry.' por pd.json_normalize de Bronze
-tiene_entry_station = "entry.station" in df_mr.columns
+rutas = sorted(glob.glob("bronze/metroriel_viajes/**/*.parquet", recursive=True))
+print(f"   [metroriel_viajes] {len(rutas)} archivos Parquet encontrados", flush=True)
 
-for _, row in df_mr.iterrows():
-    if tiene_entry_station:
-        entry_obj = {
-            "station": row.get("entry.station"),
-            "ts": str(row.get("entry.ts"))
-        }
-        exit_obj = {
-            "station": row.get("exit.station"),
-            "ts": str(row.get("exit.ts"))
-        } if pd.notna(row.get("exit.station")) else None
-    else:
-        # Si guardó el objeto dict original
-        entry_obj = row.get("entry")
-        exit_obj = row.get("exit")
+for ruta in rutas:
+    pf = pq.ParquetFile(ruta)
+    for batch in pf.iter_batches(batch_size=batch_size):
+        df_batch = batch.to_pandas()
 
-    lote.append((
-        int(row.get("trip_id")),
-        str(row.get("card")),
-        json.dumps(entry_obj) if entry_obj is not None else None,
-        json.dumps(exit_obj) if exit_obj is not None else None,
-        float(row.get("fare_gtq")),
-        int(row.get("duration_s")) if pd.notna(row.get("duration_s")) else None,
-    ))
+        # Verificar si viene con prefijo 'entry.' por pd.json_normalize de Bronze
+        tiene_entry_station = "entry.station" in df_batch.columns
 
-    if len(lote) >= BATCH:
-        execute_values(
-            cursor,
-            "INSERT INTO staging.metroriel_viajes (trip_id, card, entry, exit, fare_gtq, duration_s) VALUES %s",
-            lote, page_size=BATCH
-        )
-        conn.commit()
-        insertados += len(lote)
-        print(f"   [metroriel_viajes] {insertados:,} filas — {time.time()-t0:.1f}s", flush=True)
         lote = []
+        for _, row in df_batch.iterrows():
+            if tiene_entry_station:
+                entry_obj = {
+                    "station": row.get("entry.station"),
+                    "ts": str(row.get("entry.ts")),
+                }
+                exit_obj = (
+                    {
+                        "station": row.get("exit.station"),
+                        "ts": str(row.get("exit.ts")),
+                    }
+                    if pd.notna(row.get("exit.station"))
+                    else None
+                )
+            else:
+                entry_obj = row.get("entry")
+                exit_obj = row.get("exit")
 
-if lote:
-    execute_values(
-        cursor,
-        "INSERT INTO staging.metroriel_viajes (trip_id, card, entry, exit, fare_gtq, duration_s) VALUES %s",
-        lote, page_size=BATCH
-    )
-    conn.commit()
-    insertados += len(lote)
+            lote.append((
+                int(row.get("trip_id")),
+                str(row.get("card")),
+                json.dumps(entry_obj) if entry_obj is not None else None,
+                json.dumps(exit_obj) if exit_obj is not None else None,
+                float(row.get("fare_gtq")),
+                int(row.get("duration_s")) if pd.notna(row.get("duration_s")) else None,
+            ))
 
-print(f"metroriel_viajes completado: {insertados:,} filas en {time.time()-t0:.1f}s", flush=True)
+        if lote:
+            execute_values(
+                cursor,
+                "INSERT INTO staging.metroriel_viajes "
+                "(trip_id, card, entry, exit, fare_gtq, duration_s) VALUES %s",
+                lote,
+                page_size=batch_size,
+            )
+            conn.commit()
+            insertados += len(lote)
+
+            print(
+                f"   [metroriel_viajes] {insertados:,} filas — {time.time()-t0:.1f}s",
+                flush=True,
+            )
+
+        del df_batch, lote
+
+print(
+    f"metroriel_viajes completado: {insertados:,} filas en {time.time()-t0:.1f}s",
+    flush=True,
+)
 
 cursor.close()
 conn.close()

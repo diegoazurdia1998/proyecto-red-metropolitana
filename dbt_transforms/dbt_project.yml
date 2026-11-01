@@ -7,7 +7,6 @@ profile: 'dbt_red_metropolitana'
 model-paths: ["models"]
 analysis-paths: ["analyses"]
 test-paths: ["tests"]
-seed-paths: ["seeds"]
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
 
@@ -26,10 +25,13 @@ models:
     gold:
       +schema: gold
       +materialized: table     # gold almacena dimensiones y tablas de hechos
+    features:
+      +schema: features
+      +materialized: table
 
 seeds:
   dbt_red_metropolitana:
     +schema: staging
 
 vars:
-  fecha_corte_referencia: '2026-07-15 23:59:59'
+  fecha_corte_referencia: '2026-08-30 00:00:00'

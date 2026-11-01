@@ -1,12 +1,12 @@
 # Reporte de Ingesta Streaming (Subfase 1.1)
 
-- **Origen:** Consumidor Kafka (Tópicos Transmetro y Aerómetro)
-- **Destino:** Capa Bronze (Archivos Parquet particionados YYYY/MM/DD)
-- **Total Registros Consumidos:** 566775
+- **Origen:** Consumidor Kafka (Topicos Transmetro y Aerometro)
+- **Destino:** Capa Bronze (Parquet SNAPPY, particionado YYYY/MM/DD)
+- **Total Registros Consumidos:** 1,100,838
 
-## Detalle de Registros por Tópico
+## Detalle de Registros por Topico
 
 | topico_dataset          |   registros_ingeridos |
 |:------------------------|----------------------:|
-| transmetro_validaciones |                363221 |
-| aerometro_boardings     |                203554 |
+| transmetro_validaciones |                713785 |
+| aerometro_boardings     |                387053 |

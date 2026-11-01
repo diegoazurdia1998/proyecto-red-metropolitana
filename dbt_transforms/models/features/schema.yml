@@ -1,0 +1,71 @@
+version: 2
+
+models:
+  - name: p2_features_por_corte
+    description: "Features de churn por fecha de corte (rubric 1.3). Ventana retrospectiva 28d. Solo registros VALIDO."
+    columns:
+      - name: sk_usuario
+        description: "ID canónico de persona (bigint para tarjetas, hex 12 para aerómetro)."
+        tests: [not_null]
+      - name: fecha_corte
+        description: "Timestamp del corte (parametrizado por var fecha_corte)."
+        tests: [not_null]
+      - name: n_abordajes_28d
+        description: "Total de abordajes válidos en los 28d previos a t."
+        tests: [not_null]
+      - name: n_dias_activos_28d
+        description: "Días distintos con >= 1 abordaje en 28d."
+        tests: [not_null]
+      - name: n_modos_usados_28d
+        description: "Modos distintos usados en 28d (0-4)."
+        tests: [not_null]
+      - name: pct_fin_semana_28d
+        description: "Fracción de abordajes en sáb/dom (0-1)."
+      - name: n_abordajes_14d
+        description: "Abordajes en los últimos 14d."
+        tests: [not_null]
+      - name: n_abordajes_7d
+        description: "Abordajes en los últimos 7d."
+        tests: [not_null]
+      - name: recencia_dias_ultimo_abordaje
+        description: "Días desde el último abordaje hasta t (0-28)."
+      - name: n_estaciones_distintas_28d
+        description: "Estaciones/paradas distintas en 28d."
+        tests: [not_null]
+      - name: pct_hora_pico_28d
+        description: "Fracción de abordajes en hora pico (6-9, 17-20)."
+      - name: dias_desde_alta
+        description: "Días desde el primer abordaje histórico hasta t."
+
+  - name: p2_etiquetas_por_corte
+    description: "Etiqueta de churn (rubric 1.2). 1 = sin abordajes en 30d siguientes; 0 = con al menos uno. NULL para corte C."
+    columns:
+      - name: sk_usuario
+        tests: [not_null]
+      - name: fecha_corte
+        tests: [not_null]
+      - name: etiqueta
+        description: "0/1. NULL para corte C (etiqueta oculta)."
+        tests:
+          - accepted_values:
+              arguments:
+                values: [ '0', '1' ]
+                quote: false
+              config:
+                severity: warn
+
+  - name: p2_poblacion_por_corte
+    description: "Población elegible por corte (rubric 1.2): >=2 abordajes en 28d y sin DELETE CDC."
+    columns:
+      - name: sk_usuario
+        tests: [not_null]
+      - name: fecha_corte
+        tests: [not_null]
+
+  - name: p2_features_etiqueta_por_corte
+    description: "Tabla de consumo 1.4: features + etiqueta + flag en_poblacion."
+    columns:
+      - name: sk_usuario
+        tests: [not_null]
+      - name: fecha_corte
+        tests: [not_null]

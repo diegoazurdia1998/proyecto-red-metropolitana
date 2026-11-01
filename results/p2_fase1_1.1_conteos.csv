@@ -1,0 +1,10 @@
+archivo_fuente,dataset_bronze,via_ingesta,filas_origen,filas_bronze,diferencia,explicacion,estado
+tm_estaciones.csv,tm_estaciones,Batch,104,104,0,ok,OK
+tu_paradas.csv,tu_paradas,Batch,328,328,0,ok,OK
+mr_estaciones.csv,mr_estaciones,Batch,22,22,0,ok,OK
+am_estaciones.csv,am_estaciones,Batch,14,14,0,ok,OK
+transurbano_transacciones.csv,transurbano_transacciones,Batch,1635788,1635788,0,ok,OK
+metroriel_viajes.jsonl,metroriel_viajes,Batch,590844,590844,0,ok,OK
+cdc_padron_usuarios.csv,cdc_padron_usuarios,CDC,77636,77636,0,ok,OK
+transmetro_validaciones.csv,transmetro_validaciones,Streaming (Kafka),713786,713785,-1,faltan_1_filas_en_bronze (ingesta parcial),REVISAR
+aerometro_boardings.csv,aerometro_boardings,Streaming (Kafka),387053,387053,0,ok,OK

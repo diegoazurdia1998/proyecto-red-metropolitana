@@ -1,13 +1,13 @@
 # Resumen CDC y Catálogos Mínimos (Subfase 1.2)
 
 ## Balance CDC Transmetro
-- **Eventos INSERT:** 10800
-- **Eventos DELETE:** 4050
-- **Eventos UPDATE:** 16200
-- **Tarjetas activas:** 19488
-- **Tarjetas dadas de baja:** 661
+- **Eventos INSERT:** 29700
+- **Eventos DELETE:** 12095
+- **Eventos UPDATE:** 35841
+- **Tarjetas activas:** 42075
+- **Tarjetas dadas de baja:** 5184
 
 ## Usuarios Únicos por Sistema
-- **Transurbano:** 36567
-- **MetroRiel:** 22885
-- **Aerómetro:** 14496
+- **Transurbano:** 45685
+- **MetroRiel:** 26414
+- **Aerómetro:** 16930

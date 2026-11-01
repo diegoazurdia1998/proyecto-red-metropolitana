@@ -5,7 +5,7 @@
 
 WITH fecha_ancla AS (
     -- Corte fijo determinista al 2026-07-15 según especificación oficial
-    SELECT '{{ var("fecha_corte_referencia", "2026-07-15 23:59:59") }}'::timestamp AS fecha_corte
+    SELECT '{{ var("fecha_corte_referencia") }}'::timestamp AS fecha_corte
 ),
 
 eventos_silver AS (

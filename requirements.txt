@@ -8,3 +8,5 @@ dbt-core>=1.7.0
 dbt-postgres>=1.7.0
 prefect>=2.16.0
 python-dotenv>=1.0.1
+matplotlib>=3.11.2
+sklearn>=1.7.2

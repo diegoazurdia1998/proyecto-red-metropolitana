@@ -1,0 +1,4 @@
+metrica,descripcion,numerador,denominador,valor,unidad
+1_costo_identidad,Fracción de usuarios de la población con >= 2 tarjetas asociadas,27778,58600,47.4,%
+2_cobertura_identidad,Fracción de user_hash de Aerómetro vinculables a un sk_usuario de tarjeta,0,16930,0.0,%
+3_falsos_positivos,Tarjetas 'abandonadas' de personas con etiqueta_persona=0 y >= 2 tarjetas,7347,92622,7.93,%
