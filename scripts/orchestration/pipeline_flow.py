@@ -121,6 +121,7 @@ def _p2_limpiar_consumer_groups_kafka(logger):
     except Exception as e:
         logger.warning(f"⚠️  No se pudo limpiar consumer groups (no bloqueante): {e}")
 
+
 def _esperar_topic_vacio(topic: str, timeout_s: int = 30) -> bool:
     """Espera a que el offset final del topic sea 0 (delete completado)."""
     bootstrap = "localhost:9092"
@@ -198,6 +199,7 @@ def _p2_limpiar_topics_kafka(logger):
                 f"Abortando para no contaminar el test de idempotencia."
             )
 
+
 # ---------------------------------------------------------------------------
 # Limpieza de entorno
 # ---------------------------------------------------------------------------
@@ -224,7 +226,7 @@ def limpiar_bronze(limpiar_results: bool = True):
 
 
 # ---------------------------------------------------------------------------
-# Tasks
+# Tasks P1 — Ingesta, Staging, dbt, Cuarentena, Conteos
 # ---------------------------------------------------------------------------
 @task(name="Ingesta Capa Bronze (Batch/CDC)")
 def task_ingesta_bronze(limpiar: bool = True):
@@ -287,20 +289,43 @@ def task_medir_conteos(corrida_label: str):
     with medir_etapa("medir_conteos"):
         """Consulta los conteos exactos por tabla para auditoría de idempotencia."""
         tablas = [
+            # Silver (6) — fuentes directas de las features de P2
             ("silver", "cuarentena"),
             ("silver", "snap_padron_transmetro"),
-            ("gold", "dim_usuario"),
-            ("gold", "dim_tiempo"),
+            ("silver", "silver_aerometro_validado"),
+            ("silver", "silver_metroriel_validado"),
+            ("silver", "silver_transmetro_validado"),
+            ("silver", "silver_transurbano_validado"),
+            # Gold (5) — artefactos Kimball
             ("gold", "dim_estacion_parada"),
+            ("gold", "dim_tiempo"),
+            ("gold", "dim_usuario"),
             ("gold", "fact_abordajes"),
+            ("gold", "fact_viajes_metroriel"),
+            # Features P2 (5) — base de 1.2/1.3/1.4/2.2/2.3
+            ("features", "p2_poblacion_por_corte"),
+            ("features", "p2_etiquetas_por_corte"),
+            ("features", "p2_features_por_corte"),
+            ("features", "p2_features_etiqueta_por_corte"),
+            ("features", "p2_resumen_por_corte"),
         ]
 
         conteos = {}
         with closing(get_db_connection()) as conn:
             with conn.cursor() as cur:
                 for schema, tabla in tablas:
-                    cur.execute(f"SELECT COUNT(*) FROM {schema}.{tabla};")
-                    conteos[f"{schema}.{tabla}"] = cur.fetchone()[0]
+                    try:
+                        cur.execute(f"SELECT COUNT(*) FROM {schema}.{tabla};")
+                        conteos[f"{schema}.{tabla}"] = cur.fetchone()[0]
+                    except Exception as e:
+                        # Si la tabla no existe (ej. flow con incluir_p2=False,
+                        # que no materializa las tablas de features), registrar -1
+                        # para que el test de idempotencia detecte el cambio.
+                        conn.rollback()
+                        get_run_logger().warning(
+                            f"⚠️  No se pudo contar {schema}.{tabla}: {e}"
+                        )
+                        conteos[f"{schema}.{tabla}"] = -1
 
         print("\n==========================================")
         print(f" RESULTADOS DE CONTEOS: {corrida_label}")
@@ -320,16 +345,84 @@ def p2_auditoria_ingesta():
 
 
 # ---------------------------------------------------------------------------
+# Tasks P2 — Subfases 1.4, 2.2, 2.3
+# ---------------------------------------------------------------------------
+@task(name="P2 - Exportar features corte A (1.4)")
+def p2_exportar_features_A():
+    with medir_etapa("p2_exportar_features_A"):
+        run_script("scripts/p2_exportar_features_A.py", label="P2 1.4 Exportar features A")
+    return "Features A exportadas."
+
+
+@task(name="P2 - Baselines + LogReg (1.4)")
+def p2_baselines_logreg():
+    with medir_etapa("p2_baselines_logreg"):
+        run_script("scripts/p2_baselines_logreg.py", label="P2 1.4 Baselines+LogReg")
+    return "Baselines y LogReg completados."
+
+
+@task(name="P2 - Umbral + test único en B (2.2)")
+def p2_umbral_test_unico():
+    # Nota: este script internamente exporta B si no existe (asegurar_parquets),
+    # por eso NO hay una task separada p2_exportar_features_B.
+    with medir_etapa("p2_umbral_test_unico"):
+        run_script("scripts/p2_umbral_test_unico.py", label="P2 2.2 Umbral+Test B")
+    return "Umbral derivado y test único en B completado."
+
+
+@task(name="P2 - KMeans + PCA (2.3)")
+def p2_kmeans_pca():
+    with medir_etapa("p2_kmeans_pca"):
+        run_script("scripts/p2_kmeans_pca.py", label="P2 2.3 KMeans+PCA")
+    return "Segmentación completada."
+
+
+# ---------------------------------------------------------------------------
 # Flow
 # ---------------------------------------------------------------------------
 @flow(name="AMT - Pipeline End-to-End P2")
-def red_metropolitana_pipeline(corrida_label: str = "Corrida P2", limpiar: bool = True):
-    task_ingesta_bronze(limpiar=limpiar)
-    task_cargar_staging()
-    task_ejecutar_dbt()
-    task_cuarentena()
-    conteos = task_medir_conteos(corrida_label)
-    p2_auditoria_ingesta()
+def red_metropolitana_pipeline(
+    corrida_label: str = "Corrida P2",
+    limpiar: bool = True,
+    solo_modelado: bool = False,
+    incluir_p2: bool = True,
+):
+    """
+    Args:
+        corrida_label: etiqueta para logs y tabla de conteos.
+        limpiar: si True, borra bronze/results antes de ingerir (corrida desde cero).
+        solo_modelado: si True, salta ingesta+staging+dbt+cuarentena y solo corre
+                       las subfases P2 (1.4, 2.2, 2.3). ⚠️ Requiere que staging y
+                       features ya existan en Postgres; de lo contrario falla.
+        incluir_p2: si False, solo corre el pipeline Medallion del P1
+                    (Bronze → Staging → dbt → Cuarentena → Conteos).
+                    Útil para el test de idempotencia de 1.5: las subfases P2
+                    no son idempotentes por diseño (B se toca una sola vez).
+    """
+    if not solo_modelado:
+        task_ingesta_bronze(limpiar=limpiar)
+        task_cargar_staging()
+        task_ejecutar_dbt()
+        task_cuarentena()
+        conteos = task_medir_conteos(corrida_label)
+        p2_auditoria_ingesta()
+    else:
+        conteos = {}
+
+    if incluir_p2:
+        # Fase 1.4
+        p2_exportar_features_A()
+        p2_baselines_logreg()
+
+        # Fase 2.2 (exporta B internamente si no existe)
+        p2_umbral_test_unico()
+
+        # Fase 2.3
+        p2_kmeans_pca()
+
+        # Nota: 2.4 (predecir_C + prueba_invariancia) se agregan cuando el
+        # catedrático resuelva las dudas pendientes.
+
     return conteos
 
 

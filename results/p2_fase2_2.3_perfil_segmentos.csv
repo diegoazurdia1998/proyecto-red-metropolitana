@@ -1,0 +1,3 @@
+segmento,n_usuarios,mediana_n_abordajes_28d,mediana_n_dias_activos_28d,mediana_n_modos_usados_28d,mediana_recencia_dias_ultimo_abordaje,mediana_n_estaciones_distintas_28d,tasa_abandono_pct,tipo
+0,44936,7.0,6.0,1.0,3.7,3.0,15.98495638241054,inactivos_en_riesgo
+1,13664,33.0,17.0,2.0,0.67,11.0,2.2175058548009368,intensivos_regulares

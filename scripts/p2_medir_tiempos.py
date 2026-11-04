@@ -13,7 +13,7 @@ Escribe/append a results/p2_tiempos_etapa.csv con columnas:
 import os
 import time
 from contextlib import contextmanager
-from datetime import datetime
+from datetime import datetime, timezone
 import pandas as pd
 
 RESULTS_DIR = "./results"
@@ -28,7 +28,7 @@ def _asegurar_results():
 def medir_etapa(nombre: str):
     """Context manager que mide la duración de un bloque y la persiste."""
     _asegurar_results()
-    start = datetime.utcnow()
+    start = datetime.now(timezone.utc)
     t0 = time.perf_counter()
     error = None
     try:
@@ -37,7 +37,7 @@ def medir_etapa(nombre: str):
         error = e
         raise
     finally:
-        end = datetime.utcnow()
+        end = datetime.now(timezone.utc)
         duration_s = round(time.perf_counter() - t0, 4)
         fila = {
             "etapa": nombre,

@@ -11,9 +11,10 @@ def correr_pipeline(label: str, limpiar: bool) -> dict:
     codigo = (
         "import json; "
         "from scripts.orchestration.pipeline_flow import red_metropolitana_pipeline; "
-        f"c = red_metropolitana_pipeline(corrida_label={label!r}, limpiar={limpiar}); "
+                f"c = red_metropolitana_pipeline(corrida_label={label!r}, limpiar={limpiar}, incluir_p2=False); "
         "print('__CONTEOS__' + json.dumps(c), flush=True)"
     )
+
     env = os.environ.copy()
     env["PYTHONIOENCODING"] = "utf-8"
     env["PYTHONUTF8"] = "1"
