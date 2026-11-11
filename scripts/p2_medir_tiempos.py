@@ -7,8 +7,13 @@ Uso:
     with medir_etapa("ingesta_bronze"):
         ...trabajo...
 
-Escribe/append a results/p2_tiempos_etapa.csv con columnas:
-    etapa, start, end, duration_s
+Escribe/actualiza results/p2_tiempos_etapa.csv con columnas:
+    etapa, start, end, duration_s, estado
+
+Comportamiento:
+  - Si la etapa NO existe en el CSV → agrega una fila.
+  - Si la etapa YA existe en el CSV → reemplaza la fila (no acumula).
+  - Si quieres preservar histórico entre corridas, borrá el CSV antes de correr.
 """
 import os
 import time
@@ -18,15 +23,26 @@ import pandas as pd
 
 RESULTS_DIR = "./results"
 TIEMPOS_CSV = os.path.join(RESULTS_DIR, "p2_tiempos_etapa.csv")
+COLUMNAS = ["etapa", "start", "end", "duration_s", "estado"]
 
 
 def _asegurar_results():
     os.makedirs(RESULTS_DIR, exist_ok=True)
 
 
+def _leer_tiempos_raw() -> pd.DataFrame:
+    """Lee el CSV (vacío si no existe)."""
+    if not os.path.exists(TIEMPOS_CSV):
+        return pd.DataFrame(columns=COLUMNAS)
+    return pd.read_csv(TIEMPOS_CSV)
+
+
 @contextmanager
 def medir_etapa(nombre: str):
-    """Context manager que mide la duración de un bloque y la persiste."""
+    """Context manager que mide la duración de un bloque y la persiste.
+
+    Reemplaza la fila si `nombre` ya existe (upsert por etapa).
+    """
     _asegurar_results()
     start = datetime.now(timezone.utc)
     t0 = time.perf_counter()
@@ -46,14 +62,16 @@ def medir_etapa(nombre: str):
             "duration_s": duration_s,
             "estado": "ERROR" if error else "OK",
         }
-        header = not os.path.exists(TIEMPOS_CSV)
-        pd.DataFrame([fila]).to_csv(
-            TIEMPOS_CSV, mode="a", header=header, index=False, encoding="utf-8"
-        )
+        # Leer, eliminar filas previas de la misma etapa, agregar, guardar
+        df = _leer_tiempos_raw()
+        if nombre in df["etapa"].values:
+            df = df[df["etapa"] != nombre]
+        df = pd.concat([df, pd.DataFrame([fila])], ignore_index=True)
+        df.to_csv(TIEMPOS_CSV, index=False, encoding="utf-8")
 
 
 def leer_tiempos() -> pd.DataFrame:
     """Devuelve el DataFrame de tiempos (vacío si no existe el archivo)."""
     if not os.path.exists(TIEMPOS_CSV):
-        return pd.DataFrame(columns=["etapa", "start", "end", "duration_s", "estado"])
+        return pd.DataFrame(columns=COLUMNAS)
     return pd.read_csv(TIEMPOS_CSV)

@@ -1,0 +1,22 @@
+{
+  "eleccion": "HGB",
+  "hgb_params": {
+    "max_iter": 200,
+    "learning_rate": 0.05,
+    "max_depth": 5,
+    "min_samples_leaf": 20,
+    "l2_regularization": 1.0,
+    "random_state": 42
+  },
+  "l2_params": {
+    "penalty": "l2",
+    "C": 0.01,
+    "solver": "saga",
+    "max_iter": 5000,
+    "random_state": 42
+  },
+  "hgb_roc_media": 0.8598737032801875,
+  "hgb_roc_std": 0.0072410475393664435,
+  "l2_roc_media": 0.8487878015537105,
+  "overfitting": "no"
+}

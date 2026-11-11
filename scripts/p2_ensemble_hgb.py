@@ -158,7 +158,7 @@ def importancia_permutacion(X, y, skf) -> pd.DataFrame:
             scoring="roc_auc",
             n_repeats=10,
             random_state=RANDOM_STATE,
-            n_jobs=-1,
+            n_jobs=1,
         )
         importancias.append({
             "fold": i,
@@ -370,6 +370,21 @@ def main():
     ruta_md = os.path.join(RESULTS_DIR, "p2_fase2_2.1_resumen.md")
     escribir_markdown(df_folds, df_imp, l2_res, decision, ruta_md)
     print(f"✅ MD: {ruta_md}")
+
+    # Decisión en JSON para que 2.2 entrene el modelo elegido (HGB o L2)
+    import json
+    ruta_decision = os.path.join(RESULTS_DIR, "p2_fase2_2.1_decision.json")
+    with open(ruta_decision, "w", encoding="utf-8") as f:
+        json.dump({
+            "eleccion": decision["eleccion"],
+            "hgb_params": HGB_PARAMS,
+            "l2_params": L2_PARAMS,
+            "hgb_roc_media": decision["hgb_roc_media"],
+            "hgb_roc_std": decision["hgb_roc_std"],
+            "l2_roc_media": decision["l2_roc_media"],
+            "overfitting": decision["overfitting"],
+        }, f, indent=2, ensure_ascii=False)
+    print(f"✅ Decisión 2.1: {ruta_decision} (elección = {decision['eleccion']})")
 
     print("\n" + "=" * 60)
     print(" ✅ Turno 6 completado")

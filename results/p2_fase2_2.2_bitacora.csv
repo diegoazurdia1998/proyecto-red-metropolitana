@@ -1,2 +1,2 @@
 fecha,commit_hash,modelo,corte_train,corte_test,p_teorico,p_empirico_A,p_elegido,roc_auc_B,pr_auc_B,precision_B,recall_B,f1_B,contactados_B,tp_contactados_B,retenidos_esperados_B,beneficio_neto_B
-2026-11-03T22:33:11,efcfb004eb19,HGB,A,B,0.3333,0.37,0.3333,0.8482,0.3896,0.4098,0.4815,0.4428,7320,3000,750,8400.0
+2026-11-06T21:43:31,a830ed73c061,HistGradientBoostingClassifier,A,B,0.3333,0.37,0.3333,0.8482,0.3896,0.4098,0.4815,0.4428,7320,3000,750,8400.0

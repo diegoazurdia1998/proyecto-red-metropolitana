@@ -1,6 +1,6 @@
 # Fase 2.2 — Umbral y test único en B
 
-_Fecha: 2026-11-03T22:33:11 | Commit: `efcfb004eb19` | Modelo: HGB_
+_Fecha: 2026-11-06T21:43:31 | Commit: `a830ed73c061` | Modelo: HGB_
 
 ## Derivación del umbral
 

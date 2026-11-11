@@ -24,12 +24,19 @@ def run_script(script_path: str, label: str = ""):
     logger = get_run_logger()
     logger.info(f"▶️  Iniciando {label or script_path} ...")
 
+    env = os.environ.copy()
+    env["PYTHONIOENCODING"] = "utf-8"
+    env["PYTHONUTF8"] = "1"
+
     process = subprocess.Popen(
         [sys.executable, script_path],
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         bufsize=1,
+        env=env,
     )
     try:
         for line in process.stdout:
@@ -46,12 +53,20 @@ def run_script(script_path: str, label: str = ""):
 def run_command(cmd: list[str], label: str = ""):
     logger = get_run_logger()
     logger.info(f"▶️  {label}: {' '.join(cmd)}")
+
+    env = os.environ.copy()
+    env["PYTHONIOENCODING"] = "utf-8"
+    env["PYTHONUTF8"] = "1"
+
     process = subprocess.Popen(
         cmd,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         text=True,
+        encoding="utf-8",
+        errors="replace",
         bufsize=1,
+        env=env,
     )
     try:
         for line in process.stdout:
@@ -345,7 +360,7 @@ def p2_auditoria_ingesta():
 
 
 # ---------------------------------------------------------------------------
-# Tasks P2 — Subfases 1.4, 2.2, 2.3
+# Tasks P2 — Subfases 1.4, 2.1, 2.2, 2.3, 2.4
 # ---------------------------------------------------------------------------
 @task(name="P2 - Exportar features corte A (1.4)")
 def p2_exportar_features_A():
@@ -361,10 +376,17 @@ def p2_baselines_logreg():
     return "Baselines y LogReg completados."
 
 
+@task(name="P2 - Ensemble HGB y sesgo-varianza (2.1)")
+def p2_ensemble_hgb():
+    with medir_etapa("p2_ensemble_hgb"):
+        run_script("scripts/p2_ensemble_hgb.py", label="P2 2.1 Ensemble HGB")
+    return "Ensemble HGB completado y decisión 2.1 guardada."
+
+
 @task(name="P2 - Umbral + test único en B (2.2)")
 def p2_umbral_test_unico():
-    # Nota: este script internamente exporta B si no existe (asegurar_parquets),
-    # por eso NO hay una task separada p2_exportar_features_B.
+    # Nota: este script internamente exporta B si no existe (asegurar_parquets)
+    # y usa el modelo elegido en 2.1 (results/p2_fase2_2.1_decision.json).
     with medir_etapa("p2_umbral_test_unico"):
         run_script("scripts/p2_umbral_test_unico.py", label="P2 2.2 Umbral+Test B")
     return "Umbral derivado y test único en B completado."
@@ -375,6 +397,13 @@ def p2_kmeans_pca():
     with medir_etapa("p2_kmeans_pca"):
         run_script("scripts/p2_kmeans_pca.py", label="P2 2.3 KMeans+PCA")
     return "Segmentación completada."
+
+
+@task(name="P2 - Prueba de invariancia A/B/C (2.4)")
+def p2_prueba_invariancia():
+    with medir_etapa("p2_prueba_invariancia"):
+        run_script("scripts/p2_prueba_invariancia.py", label="P2 2.4 Invariancia A/B/C")
+    return "Prueba de invariancia completada."
 
 
 # ---------------------------------------------------------------------------
@@ -392,12 +421,12 @@ def red_metropolitana_pipeline(
         corrida_label: etiqueta para logs y tabla de conteos.
         limpiar: si True, borra bronze/results antes de ingerir (corrida desde cero).
         solo_modelado: si True, salta ingesta+staging+dbt+cuarentena y solo corre
-                       las subfases P2 (1.4, 2.2, 2.3). ⚠️ Requiere que staging y
-                       features ya existan en Postgres; de lo contrario falla.
+                       las subfases P2 (1.4, 2.1, 2.2, 2.3, 2.4). ⚠️ Requiere que
+                       staging y features ya existan en Postgres; de lo contrario falla.
         incluir_p2: si False, solo corre el pipeline Medallion del P1
                     (Bronze → Staging → dbt → Cuarentena → Conteos).
-                    Útil para el test de idempotencia de 1.5: las subfases P2
-                    no son idempotentes por diseño (B se toca una sola vez).
+                    Útil para test_idempotencia.py: las subfases P2 no son
+                    idempotentes por diseño (B se toca una sola vez en 2.2).
     """
     if not solo_modelado:
         task_ingesta_bronze(limpiar=limpiar)
@@ -414,14 +443,17 @@ def red_metropolitana_pipeline(
         p2_exportar_features_A()
         p2_baselines_logreg()
 
-        # Fase 2.2 (exporta B internamente si no existe)
+        # Fase 2.1 — decisión de modelo (HGB vs L2)
+        p2_ensemble_hgb()
+
+        # Fase 2.2 — umbral + test único en B (usa el modelo de 2.1)
         p2_umbral_test_unico()
 
-        # Fase 2.3
+        # Fase 2.3 — segmentación
         p2_kmeans_pca()
 
-        # Nota: 2.4 (predecir_C + prueba_invariancia) se agregan cuando el
-        # catedrático resuelva las dudas pendientes.
+        # Fase 2.4 — invariancia A/B/C (requiere el .pkl de 2.2)
+        p2_prueba_invariancia()
 
     return conteos
 

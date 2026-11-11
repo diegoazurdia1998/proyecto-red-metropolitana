@@ -76,36 +76,44 @@ ACCIONES_RETENCION = {
 
 def cargar_datos() -> pd.DataFrame:
     if not os.path.exists(PARQUET_A):
-        print(f"❌ No existe {PARQUET_A}. Corre: python -m scripts.p2_exportar_features_A")
+        print(f"❌ No existe {PARQUET_A}. Corre: python -m scripts.p2_exportar_features_A", flush=True)
         sys.exit(1)
+    print(f"   Leyendo {PARQUET_A}...", flush=True)
     df = pd.read_parquet(PARQUET_A)
-    print(f"✅ Cargadas {len(df):,} filas de {PARQUET_A}")
+    print(f"✅ Cargadas {len(df):,} filas de {PARQUET_A}", flush=True)
 
     faltantes = [c for c in CLUSTER_FEATURES if c not in df.columns]
     if faltantes:
-        print(f"❌ Faltan features: {faltantes}")
+        print(f"❌ Faltan features: {faltantes}", flush=True)
         sys.exit(1)
 
     df = df.dropna(subset=CLUSTER_FEATURES).reset_index(drop=True)
-    print(f"   Tras dropna: {len(df):,} filas")
+    print(f"   Tras dropna: {len(df):,} filas", flush=True)
+    print(f"   A clusterizar con {len(CLUSTER_FEATURES)} features: {CLUSTER_FEATURES}", flush=True)
     return df
 
 
 def estandarizar(df: pd.DataFrame):
+    print("   Estandarizando con StandardScaler...", flush=True)
     scaler = StandardScaler()
     X = scaler.fit_transform(df[CLUSTER_FEATURES].values)
+    print(f"   ✅ Shape estandarizado: {X.shape}", flush=True)
     return X, scaler
 
 
 def barrido_k(X) -> pd.DataFrame:
     filas = []
-    for k in K_RANGE:
+    total_k = len(K_RANGE)
+    print(f"   Iniciando barrido de k ∈ {K_RANGE} (puede tardar varios minutos)...", flush=True)
+    for i, k in enumerate(K_RANGE, start=1):
+        print(f"   [{i}/{total_k}] Ajustando KMeans con k={k} (n_init=10)...", flush=True)
         km = KMeans(n_clusters=k, random_state=RANDOM_STATE, n_init=10)
         labels = km.fit_predict(X)
         inercia = km.inertia_
+        print(f"   [{i}/{total_k}] Calculando silueta para k={k}...", flush=True)
         sil = silhouette_score(X, labels)
         filas.append({"k": k, "inercia": inercia, "silueta": sil})
-        print(f"   k={k}: inercia={inercia:,.1f}  silueta={sil:.4f}")
+        print(f"   [{i}/{total_k}] ✅ k={k}: inercia={inercia:,.1f}  silueta={sil:.4f}", flush=True)
     return pd.DataFrame(filas)
 
 
@@ -140,6 +148,7 @@ def graficar_k(df_k: pd.DataFrame, k_opt: int, ruta_png: str):
 
 
 def pca_y_graficar(X, labels: np.ndarray, ruta_png: str):
+    print("   Reduciendo a 2 componentes...", flush=True)
     pca = PCA(n_components=2, random_state=RANDOM_STATE)
     X_pca = pca.fit_transform(X)
     var_exp = pca.explained_variance_ratio_
@@ -174,10 +183,11 @@ def _guardar_png(ruta_png: str):
             raise RuntimeError(f"El archivo {ruta_abs} está bloqueado. Cerralo y volvé a correr.")
     plt.savefig(ruta_abs, dpi=120, bbox_inches="tight")
     plt.close()
-    print(f"✅ Gráfica: {ruta_abs}")
+    print(f"✅ Gráfica: {ruta_abs}", flush=True)
 
 
 def perfil_segmentos(df: pd.DataFrame, labels: np.ndarray) -> pd.DataFrame:
+    print("   Calculando medianas por segmento...", flush=True)
     df = df.copy()
     df["segmento"] = labels
     filas = []
@@ -281,42 +291,47 @@ def escribir_markdown(df_k, k_opt, df_perfil, pca, var_exp, df_seg_user, ruta_md
 
 
 def main():
-    print("=" * 60)
-    print(" RUBRIC 2.3 — KMeans + PCA + segmentos")
-    print("=" * 60)
+    print("=" * 60, flush=True)
+    print(" RUBRIC 2.3 — KMeans + PCA + segmentos", flush=True)
+    print("=" * 60, flush=True)
 
     df = cargar_datos()
     X, scaler = estandarizar(df)
-    print(f"   Features usadas: {CLUSTER_FEATURES}")
-    print(f"   Shape: {X.shape}")
+    print(f"   Features usadas: {CLUSTER_FEATURES}", flush=True)
+    print(f"   Shape: {X.shape}", flush=True)
 
-    print(f"\n▶️  Barrido de k ∈ {{{min(K_RANGE)}..{max(K_RANGE)}}}")
+    print(f"\n▶️  Barrido de k ∈ {{{min(K_RANGE)}..{max(K_RANGE)}}}", flush=True)
     df_k = barrido_k(X)
 
     k_opt = elegir_k(df_k)
-    print(f"\n✅ k elegido por silueta: {k_opt}")
+    sil_opt = float(df_k.loc[df_k["k"] == k_opt, "silueta"].iloc[0])
+    print(f"\n✅ k elegido por silueta: {k_opt} (silueta = {sil_opt:.4f})", flush=True)
 
-    print(f"\n▶️  Gráfica codo + silueta")
+    print(f"\n▶️  Generando gráfica codo + silueta...", flush=True)
     ruta_k_png = os.path.join(RESULTS_DIR, "p2_fase2_2.3_k_seleccion.png")
     graficar_k(df_k, k_opt, ruta_k_png)
 
-    print(f"\n▶️  Ajustando KMeans final con k={k_opt}")
+    print(f"\n▶️  Ajustando KMeans FINAL con k={k_opt} (una vez, sobre todo A)...", flush=True)
     km = KMeans(n_clusters=k_opt, random_state=RANDOM_STATE, n_init=10)
     labels = km.fit_predict(X)
-    print(f"   Inercia: {km.inertia_:,.1f}")
-    print(f"   Silueta: {silhouette_score(X, labels):.4f}")
+    print(f"   Inercia final: {km.inertia_:,.1f}", flush=True)
+    print(f"   Calculando silueta final...", flush=True)
+    sil_final = silhouette_score(X, labels)
+    print(f"   Silueta final: {sil_final:.4f}", flush=True)
 
-    print("\n▶️  PCA 2D")
+    print("\n▶️  Reduciendo a PCA 2D...", flush=True)
     ruta_pca_png = os.path.join(RESULTS_DIR, "p2_fase2_2.3_pca_2d.png")
     pca, var_exp = pca_y_graficar(X, labels, ruta_pca_png)
+    print(f"   Varianza explicada: PC1={var_exp[0]*100:.2f}%  PC2={var_exp[1]*100:.2f}%  "
+          f"total={var_exp.sum()*100:.2f}%", flush=True)
 
-    print("\n▶️  Perfil de segmentos")
+    print("\n▶️  Calculando perfil de segmentos (medianas + tasa de abandono)...", flush=True)
     df_perfil = perfil_segmentos(df, labels)
-    # Clasificar tipo
+    print("   Clasificando tipo de segmento...", flush=True)
     df_perfil["tipo"] = df_perfil.apply(lambda r: clasificar_segmento(r, df_perfil), axis=1)
-    print(df_perfil[["segmento", "n_usuarios", "tipo", "tasa_abandono_pct"]].to_string(index=False))
+    print(df_perfil[["segmento", "n_usuarios", "tipo", "tasa_abandono_pct"]].to_string(index=False), flush=True)
 
-    print("\n▶️  Guardando artefactos")
+    print("\n▶️  Guardando artefactos...", flush=True)
     df_seg_user = df[["sk_usuario"] + CLUSTER_FEATURES].copy()
     df_seg_user["segmento"] = labels
     df_seg_user.to_csv(os.path.join(RESULTS_DIR, "p2_fase2_2.3_segmentos.csv"),
@@ -325,8 +340,9 @@ def main():
                 index=False, encoding="utf-8")
     df_perfil.to_csv(os.path.join(RESULTS_DIR, "p2_fase2_2.3_perfil_segmentos.csv"),
                      index=False, encoding="utf-8")
+    print(f"   ✅ 3 CSVs guardados", flush=True)
 
-    # Guardar KMeans + scaler para asignar C en 2.4
+    print("   Guardando KMeans + scaler...", flush=True)
     import joblib
     os.makedirs(MODELOS_DIR, exist_ok=True)
     joblib.dump(
@@ -334,15 +350,16 @@ def main():
          "k": k_opt, "perfil": df_perfil},
         os.path.join(MODELOS_DIR, "p2_kmeans_v1.0.0.pkl"),
     )
-    print(f"✅ KMeans guardado: {MODELOS_DIR}/p2_kmeans_v1.0.0.pkl")
+    print(f"✅ KMeans guardado: {MODELOS_DIR}/p2_kmeans_v1.0.0.pkl", flush=True)
 
+    print("\n▶️  Escribiendo resumen MD...", flush=True)
     ruta_md = os.path.join(RESULTS_DIR, "p2_fase2_2.3_resumen.md")
     escribir_markdown(df_k, k_opt, df_perfil, pca, var_exp, df_seg_user, ruta_md)
-    print(f"✅ MD: {ruta_md}")
+    print(f"✅ MD: {ruta_md}", flush=True)
 
-    print("\n" + "=" * 60)
-    print(" ✅ Turno 8 completado")
-    print("=" * 60)
+    print("\n" + "=" * 60, flush=True)
+    print(" ✅ Turno 8 completado", flush=True)
+    print("=" * 60, flush=True)
 
 
 if __name__ == "__main__":

@@ -184,11 +184,37 @@ def preparar_xy(df: pd.DataFrame):
     return df[FEATURE_COLS].astype(float).values, df["etiqueta"].astype(int).values
 
 
-def entrenar_en_A(df_a: pd.DataFrame) -> HistGradientBoostingClassifier:
+def entrenar_en_A(df_a: pd.DataFrame):
+    """Entrena el modelo ELEGIDO en 2.1 (HGB o L2) con TODO el corte A.
+
+    Lee results/p2_fase2_2.1_decision.json para respetar la decisión de 2.1.
+    Si no existe, aborta con mensaje claro (falta correr 2.1).
+    """
+    ruta_decision = os.path.join(RESULTS_DIR, "p2_fase2_2.1_decision.json")
+    if not os.path.exists(ruta_decision):
+        raise RuntimeError(
+            f"Falta {ruta_decision}. Corre primero p2_ensemble_hgb.py (2.1)."
+        )
+
+    import json
+    from sklearn.linear_model import LogisticRegression
+    with open(ruta_decision, "r", encoding="utf-8") as f:
+        dec = json.load(f)
+
+    eleccion = dec["eleccion"]
     X_a, y_a = preparar_xy(df_a)
-    model = HistGradientBoostingClassifier(**HGB_PARAMS)
+
+    if eleccion == "HGB":
+        model = HistGradientBoostingClassifier(**dec["hgb_params"])
+        nombre = "HGB"
+    else:
+        # "L2" o "Empate técnico" → L2 por interpretabilidad (criterio de 2.1)
+        model = LogisticRegression(**dec["l2_params"])
+        nombre = "L2"
+
     model.fit(X_a, y_a)
-    print(f"✅ HGB entrenado con TODO A ({len(X_a):,} filas)")
+    print(f"✅ Modelo '{nombre}' (elección 2.1 = '{eleccion}') "
+          f"entrenado con TODO A ({len(X_a):,} filas)")
     return model
 
 
@@ -286,14 +312,14 @@ def leer_bitacora() -> pd.DataFrame:
     return pd.read_csv(BITACORA_CSV)
 
 
-def escribir_bitacora_y_resumen(df_barrido, umbral_empirico, umbral_elegido, metricas_B):
+def escribir_bitacora_y_resumen(df_barrido, umbral_empirico, umbral_elegido, metricas_B, model=None):
     ahora = datetime.now().isoformat(timespec="seconds")
     h = hash_commit()
 
     fila = {
         "fecha": ahora,
         "commit_hash": h,
-        "modelo": "HGB",
+        "modelo": type(model).__name__ if model is not None else "HGB",
         "corte_train": "A",
         "corte_test": "B",
         "p_teorico": round(P_TEORICO, 4),
@@ -381,16 +407,19 @@ def main():
     print(f"   p*_teorico = {P_TEORICO:.4f}  (= 5 / (60 × 0.25))")
     print(f"   p*_default_elegido = {P_DEFAULT_ELEGIDO:.4f}")
 
-    # Guard: si ya hay bitácora con corte B, abortar
+    # Guard: si ya hay bitácora con corte B, hacer SKIP limpio (exit 0)
     hist = leer_bitacora()
     if not hist.empty and (hist["corte_test"] == "B").any():
-        print("\n❌ Ya existe una evaluación de B en la bitácora.")
+        print("\n⚠️  Ya existe una evaluación de B en la bitácora.")
+        print("   Por el rubric 2.2, B se evalúa UNA SOLA VEZ. Se omite esta etapa.")
         print("   Para re-evaluar: borrar p2_features_B.parquet Y p2_fase2_2.2_bitacora.csv.")
-        sys.exit(1)
+        print(f"   Bitácora actual: {BITACORA_CSV}")
+        # SKIP limpio: exit 0 para que Prefect continúe con 2.3 y 2.4
+        sys.exit(0)
 
     df_a, df_b = asegurar_parquets()
 
-    print("\n▶️  Entrenando HGB con TODO A")
+    print("\n▶️  Entrenando modelo final (decisión 2.1) con TODO A")
     model = entrenar_en_A(df_a)
 
     print("\n▶️  Barrido de umbrales en A (0.01–0.99)")
@@ -414,7 +443,7 @@ def main():
     guardar_modelo(model)
 
     print("\n▶️  Bitácora + resumen")
-    escribir_bitacora_y_resumen(df_barrido, umbral_empirico, umbral_elegido, metricas_B)
+    escribir_bitacora_y_resumen(df_barrido, umbral_empirico, umbral_elegido, metricas_B, model)
 
     # Guardar CSV del barrido (evidencia de la elección del umbral)
     ruta_barrido = os.path.join(RESULTS_DIR, "p2_fase2_2.2_barrido_umbral_A.csv")
