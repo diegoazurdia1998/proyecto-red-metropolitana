@@ -9,6 +9,7 @@ __pycache__/
 
 # Datos locales crudos y capas de almacenamiento
 datos_red/
+P2_datos_red_defensa_120dias/
 bronze/
 *.parquet
 *.duckdb
@@ -22,3 +23,8 @@ dbt_transforms/logs/
 .idea/
 .vscode/
 .DS_Store
+
+# Resultados
+final_results/
+results/
+tmp/
