@@ -26,5 +26,4 @@ dbt_transforms/logs/
 
 # Resultados
 final_results/
-results/
 tmp/

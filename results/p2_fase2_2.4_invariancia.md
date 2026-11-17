@@ -1,38 +1,70 @@
 # Fase 2.4 — Prueba de invariancia temporal
 
-**Definición operativa:** el mismo predictor (HGB entrenado en A, `p2_hgb_v1.0.0.pkl`) se aplicó sobre 3 datasets con distinta cantidad de días acumulados (A=junio, B=julio, C=agosto). Se verifica que el predictor no cambia de comportamiento ni colapsa.
+**Corte evaluado:** `2026-08-30 00:00:00`
 
-## 1. Determinismo
+**Definición operativa:** el mismo modelo (`p2_hgb_v1.0.0.pkl`) y el mismo `predecir.py` se aplican sobre dos datasets:
 
-- Corrida 1 en A: hash SHA-256 `ff133400809112a2...`
-- Corrida 2 en A: hash SHA-256 `ff133400809112a2...`
-- Resultado: **✅ idéntico bit a bit**
+- **90 días** (datos originales del proyecto, hasta el 29-ago).
+- **120 días** (datos con 30 días adicionales, hasta el 28-sep).
 
-## 2. Estabilidad de la distribución de puntajes
+Para el corte C, ambos deben producir **el mismo CSV**. Si difieren, hay fuga de datos futuros.
 
-| Corte | n usuarios | Media | Std | p50 | p90 | Contactar | % Contactar |
-|---|---|---|---|---|---|---|---|
-| A | 58,600 | 0.1279 | 0.1649 | 0.0630 | 0.3768 | 7,228 | 12.33% |
-| B | 57,457 | 0.1233 | 0.1725 | 0.0535 | 0.4290 | 7,321 | 12.74% |
-| C | 58,158 | 0.1328 | 0.1744 | 0.0579 | 0.4498 | 7,738 | 13.31% |
+## 0. Veredicto por componente
 
-**Δ % contactados (max-min): 0.98 pp** → ✅ estable (≤ 5 pp)
+| Componente | Resultado |
+|---|---|
+| determinismo | ✅ |
+| no_reentrena | ✅ |
+| poblacion_identica | ✅ |
+| puntajes_identicos | ✅ |
+| contactar_identicos | ✅ |
+| tarjetas_identicas | ✅ |
+| csv_identico | ✅ |
 
-## 3. Métricas en cortes con etiqueta (A y B)
+**Veredicto global:** ✅ PASA
 
-| Corte | ROC-AUC | PR-AUC | n etiquetados | positivos |
-|---|---|---|---|---|
-| A | 0.8716 | 0.5186 | 58,600 | 7,486 |
-| B | 0.8482 | 0.3896 | 57,457 | 6,231 |
+## 1. Determinismo (mismos datos, dos corridas)
 
-**Δ ROC-AUC (A vs B): 0.0234**. ⚠️ Diferencia notable.
+- Hash corrida 1: `4b217e9ec8554342...`
+- Hash corrida 2: `4b217e9ec8554342...`
+- **¿Idénticos bit a bit?** ✅ Sí
 
-## 4. Gráfica de distribuciones
+## 2. No-reentrenamiento del modelo
 
-![Histograma de puntajes](p2_fase2_2.4_invariancia_hist.png)
+- Hash del `.pkl` antes:  `7abc25585a2351c8...`
+- Hash del `.pkl` después: `7abc25585a2351c8...`
+- **¿El modelo cambió?** ✅ No (solo carga)
 
-Se superponen los histogramas de puntaje de A, B y C con el mismo predictor. La línea roja marca el umbral 0.3333.
+## 3. Invariancia temporal (90d vs 120d)
 
-## Conclusión
+| Métrica | Valor |
+|---|---|
+| Usuarios en 90d | 57,903 |
+| Usuarios en 120d | 57,903 |
+| Usuarios en común | 57,903 |
+| Solo en 90d | 0 |
+| Solo en 120d | 0 |
+| Max |Δ puntaje| | 0.00e+00 |
+| Media |Δ puntaje| | 0.00e+00 |
+| Contactar distintos | 0 |
+| Tarjetas distintas | 0 |
+| Unidades en el diff | 0 |
+| **¿CSV idéntico bit a bit?** | ✅ Sí |
 
-**El predictor es invariante en el tiempo.** El mismo modelo HGB entrenado en A, aplicado sobre A, B y C sin reentrenar, produce distribuciones de puntaje estables (Δ % contactados ≤ 5 pp) y es determinista (mismo dataset → mismo CSV bit a bit). Los cortes con etiqueta (A, B) muestran ROC-AUC consistente. El modelo es apto para producción sobre datos futuros del mismo origen.
+## 4. Gráficas
+
+### Histograma superpuesto
+
+![Histograma](p2_fase2_2.4_invariancia_hist.png)
+
+### Scatter 90d vs 120d (debe ser la diagonal)
+
+![Scatter](p2_fase2_2.4_invariancia_scatter.png)
+
+## 5. Conclusión
+
+**La prueba de invariancia pasa.** El mismo `predecir.py` y el mismo modelo, aplicados sobre 90 y 120 días, producen **exactamente el mismo CSV** para el corte C. El pipeline filtra `ts < fecha_corte` antes de calcular features, población y tarjetas, y no reentrena. **No hay fuga de datos futuros.**
+
+**Evidencia:**
+- Hash del CSV 90d:  `4b217e9ec8554342...`
+- Hash del CSV 120d: `4b217e9ec8554342...`
